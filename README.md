@@ -1,7 +1,7 @@
 # cortex-dashboards
 Repo of Customized/sharable dashboards for the Cortex platform
 
-[List of Dashboards](dashboards.mc)
+[List of Dashboards](dashboards.md)
 
 # How to Import into Cortex
 Importing a dashboard is as simple as naivagting ot the "Dashboard Manager" and choosing "Import" in the upper right. 
