@@ -37,7 +37,7 @@ To add a new dashboard start by [forking the repository](https://docs.github.com
 > [!TIP]
 > Using a code formatter like [Prettier](https://prettier.io/) makes it easier to read and edit the JSON file
 
-- Scrub your exported dashboard JSON file of any sensitive information (drilldowns using internal or tenant URL's, email addresses, etc.) before committing it.
+- Scrub your exported dashboard JSON file of any sensitive information (drilldowns using internal or tenant URLs, email addresses, etc.) before committing it.
 
 > [!WARNING]
 > If you have drilldowns that reference the URL of your tenant replace the tenant URL with: placeholder.com
@@ -47,10 +47,10 @@ To add a new dashboard start by [forking the repository](https://docs.github.com
 
 ---
 ### Create a Dashboard Screenshot
-- Take a screen shot of your dashbord and name it dashboard.png
+- Take a screen shot of your dashboard and name it dashboard.png
 
 > [!NOTE] 
-> Ensure that the screenshot of your dashboard captures only the dashbord and not the entire browser window. It is recommended to collapse the left sidebar to maximize the dashboard.
+> Ensure that the screenshot of your dashboard captures only the dashboard and not the entire browser window. It is recommended to collapse the left sidebar to maximize the dashboard.
 
 > [!TIP]
 > For large dashboards with lots of widgets and information use your browser zoom to increase the size of what is captured in the screenshot.
@@ -63,7 +63,7 @@ To add a new dashboard start by [forking the repository](https://docs.github.com
 - Edit the README.md file and replace the placeholders with the appropriate information
 
 > [!NOTE]
-> If your dasboard doesn't need any modifications just set the Requirements section to None and remove the existing markdown
+> If your dashboard doesn't need any modifications just set the Requirements section to None and remove the existing markdown
 
 - Make sure your folder contains only these 3 files:
     - README.md
@@ -73,10 +73,10 @@ To add a new dashboard start by [forking the repository](https://docs.github.com
 ---
 ### Edit Directory Readme
 
-In the parent folder where your dashboadard is located, there is a directory listing of all the dashboards in that hierarchy. Fill in the required fields for your dashboard and insert it alphabetically. Your dashboard position in the table can be easily identified by looking at the folder structure as they are sorted alphabetically by default.
+In the parent folder where your dashboard is located, there is a directory listing of all the dashboards in that hierarchy. Fill in the required fields for your dashboard and insert it alphabetically. Your dashboard position in the table can be easily identified by looking at the folder structure as they are sorted alphabetically by default.
 
 Example:
- | Dashboard Title |  Description  | Requires Updating URL's  | Contributor | Contributor Country |
+ | Dashboard Title |  Description  | Requires Updating URLs  | Contributor | Contributor Country |
  |---|---|---|---|---|
  | [Your Dashboard Name](your_folder_path/) | Your dashboard description. | [No | [Optional](#optional-steps)  | [Optional](#optional-steps) |
 
@@ -90,7 +90,7 @@ Copy/Paste:
 
 ## XQL Formatting
 
-In order to maintain consistency across dashboards we have established the following guidelines for formatting your XQL queries. Although some of these tasks may seem duplicative and mundane, it is important to understand not everyone who will be using these queries has the same level of experience. Because of this code readability and in-code comments are important.
+In order to maintain consistency across dashboards we have established the following guidelines for formatting your XQL queries. Although some of these tasks may seem redundant and mundane, it is important to understand not everyone who will be using these queries has the same level of experience. Because of this code readability and in-code comments are important.
 
 ---
 
@@ -120,7 +120,7 @@ dataset = asset_inventory
 
 Joins by their nature tend to be complex and difficult to read. To make it easier to read and edit your joins, always start the line before the join with an empty comment //
 
-Joins should also be split apart where after specifying the joined dataset you line break, issue your filter, fields, etc., and then specify the "as joinname" on the final line and finish with another line break.
+Joins should also be split apart where after specifying the joined dataset you line break, issue your filter, fields, etc., and then specify the "as join name" on the final line and finish with another line break.
 
 ---
 
@@ -157,7 +157,7 @@ dataset = asset_inventory
 
 Try to document your XQL with comments. This will help others understand what your query is doing and why. This is especially important when you are working on a query that is complex or has a lot of joins.
 
-Addiotionally, if there are parts of a query where you want to add functionality (filtering out certain items, etc.), but you don't want to add it by default, leave the command in, but commented out. For these scenarios follow the same advice as above with an empty comment above and below the code.
+Additionally, if there are parts of a query where you want to add functionality (filtering out certain items, etc.), but you don't want to add it by default, leave the command in, but commented out. For these scenarios follow the same advice as above with an empty comment above and below the code.
 
 Example:
 ```js
@@ -263,6 +263,6 @@ My dashboard details and description.
 
 Of course it is totally optional, but it's always good to let people know :mega: the hard work you do :muscle:! 
 
-If you are so inlined, please ddd your name and/or country flag to the parent directory of your dashboard.
+If you are so inclined, please add your name and/or country flag to the parent directory of your dashboard.
 
 [Country Flag Markdown Icons](https://github.com/ikatyang/emoji-cheat-sheet/blob/master/README.md#flags)
