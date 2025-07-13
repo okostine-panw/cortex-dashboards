@@ -40,11 +40,12 @@ jobs:
                 echo "---"
                 echo "Checking file: $file for 'email addresses'"
 
-                if jq -e '([.. | .creator_mail? | select(. != null or . != "")] | length) == 0' "$file"; then
-                    echo "❌ A non-null or non-empty string value was detected in a creator_mail key in $file"
-                    exit 1
-                else
+                if jq -e '(any(.. | .creator_mail?; type == "string" and . != "")) | not' "$file"; then
                     echo "✅ No email addresses in $file were detected."
+                else
+                    echo "❌ A non-empty string value was detected in a creator_mail key in $file"
+                    echo "Refer to the Contributing Guidelines here: https://github.com/PaloAltoNetworks/cortex-dashboards/blob/main/CONTRIBUTING.md#format-dashboard-json"
+                    exit 1
                 fi
             done
 
@@ -61,6 +62,7 @@ jobs:
                     echo "✅ All URLs in $file are valid."
                 else
                     echo "❌ A URL was found in $file that appears to be a tenant URL."
+                    echo "Refer to the Contributing Guidelines here: https://github.com/PaloAltoNetworks/cortex-dashboards/blob/main/CONTRIBUTING.md#format-dashboard-json"
                     exit 1
                 fi
             done
@@ -74,10 +76,11 @@ jobs:
                 echo "---"
                 echo "Checking file: $file for 'placeholder.com' URL"
 
-                if jq -e '([.. | .url? | select(. != null and (contains("placeholder.com") | not))] | length) == 0' "$file"; then
+                if jq -e '([.. | .url? | select(. != null and (startswith("https://placeholder.com") | not))] | length) == 0' "$file"; then
                     echo "✅ All URLs in $file are valid."
                 else
                     echo "❌ An invalid URL (that does not contain 'placeholder.com') was found in $file."
+                    echo "Refer to the Contributing Guidelines here: https://github.com/PaloAltoNetworks/cortex-dashboards/blob/main/CONTRIBUTING.md#format-dashboard-json"
                     exit 1
                 fi
             done
@@ -90,11 +93,12 @@ jobs:
             for file in $json_files; do
                 echo "---"
                 echo "Checking file: $file for 'description'"
-                if jq -e '([.. | .description? | select(. == null or . == "")] | length) == 0' "$file"; then
-                    echo "❌ A description in $file is missing or empty."
-                    exit 1
-                else
+                if jq -e '(any(.. | .description?; type == "string" and . == "")) | not' "$file"; then
                     echo "✅ All descriptions in $file are valid."
+                else
+                    echo "❌ A description in $file is missing or empty."
+                    echo "Refer to the Contributing Guidelines here: https://github.com/PaloAltoNetworks/cortex-dashboards/blob/main/CONTRIBUTING.md#widget-documentation"
+                    exit 1    
                 fi
             done
 
