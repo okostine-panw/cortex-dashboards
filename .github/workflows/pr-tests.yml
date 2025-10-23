@@ -3,6 +3,7 @@ name: PR JSON Check
 on:
   pull_request:
     branches: [ main ] 
+    types: [opened, reopened, synchronize]
 
 jobs:
   dashboard-tests:
