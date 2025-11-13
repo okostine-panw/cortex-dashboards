@@ -1,0 +1,1436 @@
+{
+  "dashboards_data": [
+    {
+      "name": "CNAPP - Runtime Workload Protection/Scan Status",
+      "description": "Status of discovered running VMs, K8S Clusters, Serverless Functions, Container Instances (Drift)",
+      "status": "ENABLED",
+      "layout": [
+        {
+          "id": "row-3617",
+          "data": [
+            {
+              "key": "xql_1761221820805",
+              "data": {
+                "type": "Custom XQL",
+                "width": 25,
+                "height": 683,
+                "params": [
+                  {
+                    "name": "FilteredRealm",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredProvider",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredGroup_ID",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredApplication",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredApplication_Owner",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredEnvironment",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredProtected",
+                    "value": "*"
+                  }
+                ],
+                "phrase": "config timeframe = 24h\n| dataset = asset_inventory\n| filter xdm.asset.type.category = \"VM Instance\"\n// | filter xdm.asset.realm != \"ON_PREM\"\n| filter xdm.asset.realm in ($FilteredRealm)\n| filter xdm.asset.provider in ($FilteredProvider)\n| fields xdm.asset.name, xdm.asset.strong_id, xdm.asset.provider, xdm.asset.cloud.region, xdm.asset.realm, xdm.asset.type.name, xdm.asset.tags, xdm.asset.normalized_fields, xdm.asset.raw_fields, xdm.asset.last_observed, xdm.kubernetes.cluster.name\n| alter Group_ID = coalesce(xdm.asset.tags -> [\"Group_ID\"], \"None\")\n| alter Application = coalesce(xdm.asset.tags -> [\"Application\"], \"None\")\n| alter ApplicationCI = coalesce(xdm.asset.tags -> [\"ApplicationCI\"], \"None\")\n| alter Application_Owner = coalesce(xdm.asset.tags -> [\"Application_Owner\"], \"None\")\n| alter Environment = coalesce(xdm.asset.tags -> [\"Environment\"], \"None\")\n| alter Environment= uppercase(Environment)\n\n| alter Function = coalesce(xdm.asset.tags -> [\"Function\"], \"None\")\n| filter Group_ID in ($FilteredGroup_ID)\n| filter Application in ($FilteredApplication)\n| filter Application_Owner in ($FilteredApplication_Owner)\n| filter Environment in ($FilteredEnvironment)\n| filter Function not contains \"SDWAN\" and Function not contains \"Firewall\" and Function not contains \"Panorama\"\n| alter agentType = xdm.asset.normalized_fields -> [\"xdm.agent.type\"]\n| alter Agentless = xdm.asset.raw_fields -> CWP[\"analysis-info_agentless_vulnerability_analyzer\"].scanner_type\n| alter K8S_Cluster = xdm.kubernetes.cluster.name\n| alter Protected = if(K8S_Cluster != null and agentType = \"CLOUD\", \"Protected K8S Node\", K8S_Cluster != null, \"Unprotected K8S Node\", agentType in (\"CLOUD\", \"REGULAR\"), \"Protected VM\", Agentless = \"agentless\", \"Agentless Scan\", agentType = null, \"Not Scanned/Protected\")\n| filter Protected in ($FilteredProtected)\n| fields Group_ID, Application, ApplicationCI, Application_Owner, Environment, Function, Protected, xdm.asset.name as Name, xdm.asset.strong_id as ResourceID, xdm.asset.type.name as Type, xdm.asset.provider as Cloud, xdm.asset.cloud.region as Region, xdm.asset.realm as Cloud_Account, agentType, xdm.asset.tags as Tags, xdm.asset.last_observed as Last_Observed\n| comp count (ResourceID ) as VMs by protected\n| sort desc VMs   \n\n| view graph type = pie xaxis = protected yaxis = VMs valuecolor(\"Not Scanned/Protected\",\"#ec0101\") valuecolor(\"Agentless Scan\",\"#5400ff\") valuecolor(\"Protected VM\",\"#111fff\") valuecolor(\"Unprotected K8S Node\",\"#ff0037\") ",
+                "timeSpan": {
+                  "toTime": "now",
+                  "fromTime": "24h",
+                  "isRelative": true
+                },
+                "time_frame": {
+                  "relativeTime": 86400000
+                },
+                "viewOptions": {
+                  "type": "pie",
+                  "commands": [
+                    {
+                      "command": {
+                        "op": "=",
+                        "name": "xaxis",
+                        "value": "protected"
+                      }
+                    },
+                    {
+                      "command": {
+                        "op": "=",
+                        "name": "yaxis",
+                        "value": "VMs"
+                      }
+                    },
+                    {
+                      "func": {
+                        "args": [
+                          "Not Scanned/Protected",
+                          "#ec0101"
+                        ],
+                        "name": "valuecolor"
+                      }
+                    },
+                    {
+                      "func": {
+                        "args": [
+                          "Agentless Scan",
+                          "#5400ff"
+                        ],
+                        "name": "valuecolor"
+                      }
+                    },
+                    {
+                      "func": {
+                        "args": [
+                          "Protected VM",
+                          "#111fff"
+                        ],
+                        "name": "valuecolor"
+                      }
+                    },
+                    {
+                      "func": {
+                        "args": [
+                          "Unprotected K8S Node",
+                          "#ff0037"
+                        ],
+                        "name": "valuecolor"
+                      }
+                    }
+                  ]
+                },
+                "drilldown_config": {
+                  "actionData": {
+                    "timeRange": "dashboard_timeframe",
+                    "xqlPhrase": "config timeframe = 24h\n| dataset = asset_inventory\n| filter xdm.asset.type.category = \"VM Instance\"\n| filter xdm.asset.realm != \"ON_PREM\"\n| fields xdm.asset.name, xdm.asset.strong_id, xdm.asset.provider, xdm.asset.cloud.region, xdm.asset.realm, xdm.asset.type.name, xdm.asset.tags, xdm.asset.normalized_fields, xdm.asset.raw_fields, xdm.asset.last_observed, xdm.kubernetes.cluster.name\n| alter Group_ID = coalesce(xdm.asset.tags -> [\"Group_ID\"], \"None\")\n| alter Application = coalesce(xdm.asset.tags -> [\"Application\"], \"None\")\n| alter ApplicationCI = coalesce(xdm.asset.tags -> [\"ApplicationCI\"], \"None\")\n| alter Application_Owner = coalesce(xdm.asset.tags -> [\"Application_Owner\"], \"None\")\n| alter Environment = coalesce(xdm.asset.tags -> [\"Environment\"], \"None\")\n| alter Function = coalesce(xdm.asset.tags -> [\"Function\"], \"None\")\n| alter agentType = xdm.asset.normalized_fields -> [\"xdm.agent.type\"]\n| alter Agentless = xdm.asset.raw_fields -> CWP[\"analysis-info_agentless_vulnerability_analyzer\"].scanner_type\n| alter K8S_Cluster = xdm.kubernetes.cluster.name\n| alter Protected = if(K8S_Cluster != null and agentType = \"CLOUD\", \"Protected K8S Node\", K8S_Cluster != null, \"Unprotected K8S Node\", agentType in (\"CLOUD\", \"REGULAR\"), \"Protected VM\", Agentless = \"agentless\", \"Agentless Scan Only\", agentType = null, \"Not Scanned/Protected\")\n| filter $x_axis.value = Protected\n| filter Function not contains \"SDWAN\" and Function not contains \"Firewall\" and Function not contains \"Panorama\"\n| fields xdm.asset.name as Name, xdm.asset.strong_id as ResourceID, xdm.asset.type.name as Type, xdm.asset.provider as Cloud, xdm.asset.cloud.region as Region, xdm.asset.realm as Cloud_Account, Protected, agentType, Group_ID, Application, ApplicationCI, Application_Owner, Environment, Function, xdm.asset.tags as Tags, xdm.asset.last_observed as Last_Observed",
+                    "timePicker": [],
+                    "openInNewTab": true
+                  },
+                  "actionType": "open_xql_search"
+                },
+                "gridRawStorageInfo": {
+                  "sort": null,
+                  "coldefs": {},
+                  "rowHeight": "{\"rowHeight\":\"regular\",\"gridRowsHeight\":\"medium-row\"}",
+                  "columnWidth": "\"stretch\""
+                }
+              }
+            },
+            {
+              "key": "xql_1761588554049",
+              "data": {
+                "type": "Custom XQL",
+                "width": 25,
+                "height": 683,
+                "params": [
+                  {
+                    "name": "FilteredGroup_ID",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredApplication",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredApplication_Owner",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredEnvironment",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredRealm",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredProvider",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredProtected",
+                    "value": "*"
+                  }
+                ],
+                "phrase": "dataset = asset_inventory\n| filter xdm.asset.type.category  = \"Kubernetes Cluster\"\n| filter xdm.asset.type.name not in (\"ECS Clusters\")\n// | filter xdm.asset.type.name in (\"Amazon EKS\", \"Azure Kubernetes Cluster\", \"Google Kubernetes Engine Container Cluster\", \"Generic Kubernetes Cluster\")\n| alter K8s_Scan  = xdm.asset.raw_fields -> CWP[\"analysis-info_k8s_compliance_publisher\"].scan_analysis_result\n| alter K8s_Agent  = xdm.asset.raw_fields -> CWP[\"analysis-info_k8s_malware_analyzer\"].scan_analysis_result\n| alter K8s_Agent_Version  = xdm.asset.raw_fields -> CWP[\"analysis-info_k8s_compliance_publisher\"].scanner_version\n| alter K8s_scanType  = xdm.asset.raw_fields -> CWP[\"analysis-info_k8s_compliance_publisher\"].scanner_type\n// GCP Only\n| alter GcpNodeCount  = xdm.asset.raw_fields -> [\"Platform Discovery\"].currentNodeCount\n| alter KSPM_Status =  xdm.asset.normalized_fields -> [ \"xdm.kubernetes.connector.status\"]\n\n| alter Group_ID = coalesce(xdm.asset.tags -> [\"Group_ID\"], \"None\")\n| alter Application = coalesce(xdm.asset.tags -> [\"Application\"], \"None\")\n| alter ApplicationCI = coalesce(xdm.asset.tags -> [\"ApplicationCI\"], \"None\")\n| alter Application_Owner = coalesce(xdm.asset.tags -> [\"Application_Owner\"], \"None\")\n| alter Environment = coalesce(xdm.asset.tags -> [\"Environment\"], \"None\")\n| alter Environment= uppercase(Environment)\n| alter Function = coalesce(xdm.asset.tags -> [\"Function\"], \"None\")\n\n| filter Group_ID in ($FilteredGroup_ID)\n| filter Application in ($FilteredApplication)\n| filter Application_Owner in ($FilteredApplication_Owner)\n| filter Environment in ($FilteredEnvironment)\n| filter xdm.asset.realm in ($FilteredRealm)\n| filter xdm.asset.provider in ($FilteredProvider)\n\n| alter Protected = if (\nK8s_Agent = \"success\" and xdm.kubernetes.connector.status = \"connected\", \"Protected_KSPM\", \nK8s_Agent = \"success\", \"Protected_No_KSPM\", \nK8s_Scan = \"success\" and xdm.kubernetes.connector.status = \"connected\", \"Scanned_KSPM\",  \nK8s_Scan = \"success\", \"Scanned_No_KSPM\", \nK8s_Scan = null , \"Not Scanned/Protected\") \n| filter Protected in ($FilteredProtected)\n\n\n| fields Group_ID, Application, ApplicationCI, Application_Owner, Environment, Function, Protected, K8s_Agent, K8s_Agent_Version, K8s_scanType, KSPM_Status, GcpNodeCount, xdm.asset.name as Name, xdm.asset.strong_id as ResourceID, xdm.asset.type.name as Type, xdm.asset.provider as Cloud, xdm.asset.cloud.region as Region, xdm.asset.realm as Cloud_Account, xdm.kubernetes.cluster.version as K8S_Version,  xdm.asset.tags as Tags, xdm.asset.last_observed as Last_Observed\n| filter (Function not contains \"\"\"SDWAN\"\"\" and Function not contains \"\"\"Firewall\"\"\" and Function not contains \"\"\"Panorama\"\"\") \n| comp count (ResourceID ) as Clusters by protected\n| sort desc Clusters  \n\n\n\n\n| view graph type = pie xaxis = protected yaxis = Clusters valuecolor(\"Not Scanned/Protected\",\"#e51e0b\") ",
+                "time_frame": {
+                  "relativeTime": 86400000
+                },
+                "viewOptions": {
+                  "type": "pie",
+                  "commands": [
+                    {
+                      "command": {
+                        "op": "=",
+                        "name": "xaxis",
+                        "value": "protected"
+                      }
+                    },
+                    {
+                      "command": {
+                        "op": "=",
+                        "name": "yaxis",
+                        "value": "Clusters"
+                      }
+                    },
+                    {
+                      "func": {
+                        "args": [
+                          "Not Scanned/Protected",
+                          "#e51e0b"
+                        ],
+                        "name": "valuecolor"
+                      }
+                    }
+                  ]
+                },
+                "drilldown_config": {
+                  "actionData": {
+                    "timeRange": "dashboard_timeframe",
+                    "xqlPhrase": "dataset = asset_inventory\n| filter xdm.asset.type.category  = \"Kubernetes Cluster\"\n| filter xdm.asset.type.name not in (\"ECS Clusters\")\n// | filter xdm.asset.type.name in (\"Amazon EKS\", \"Azure Kubernetes Cluster\", \"Google Kubernetes Engine Container Cluster\", \"Generic Kubernetes Cluster\")\n| alter K8s_Scan  = xdm.asset.raw_fields -> CWP[\"analysis-info_k8s_compliance_publisher\"].scan_analysis_result\n| alter K8s_Agent  = xdm.asset.raw_fields -> CWP[\"analysis-info_k8s_malware_analyzer\"].scan_analysis_result\n| alter K8s_Agent_Version  = xdm.asset.raw_fields -> CWP[\"analysis-info_k8s_compliance_publisher\"].scanner_version\n| alter K8s_scanType  = xdm.asset.raw_fields -> CWP[\"analysis-info_k8s_compliance_publisher\"].scanner_type\n// GCP Only\n| alter GcpNodeCount  = xdm.asset.raw_fields -> [\"Platform Discovery\"].currentNodeCount\n| alter KSPM_Status =  xdm.asset.normalized_fields -> [ \"xdm.kubernetes.connector.status\"]\n\n| alter Group_ID = coalesce(xdm.asset.tags -> [\"Group_ID\"], \"None\")\n| alter Application = coalesce(xdm.asset.tags -> [\"Application\"], \"None\")\n| alter ApplicationCI = coalesce(xdm.asset.tags -> [\"ApplicationCI\"], \"None\")\n| alter Application_Owner = coalesce(xdm.asset.tags -> [\"Application_Owner\"], \"None\")\n| alter Environment = coalesce(xdm.asset.tags -> [\"Environment\"], \"None\")\n| alter Environment= uppercase(Environment)\n| alter Function = coalesce(xdm.asset.tags -> [\"Function\"], \"None\")\n\n| alter Protected = if (\nK8s_Agent = \"success\" and xdm.kubernetes.connector.status = \"connected\", \"Protected_KSPM\", \nK8s_Agent = \"success\", \"Protected_No_KSPM\", \nK8s_Scan = \"success\" and xdm.kubernetes.connector.status = \"connected\", \"Scanned_KSPM\",  \nK8s_Scan = \"success\", \"Scanned_No_KSPM\", \nK8s_Scan = null , \"Not Scanned/Protected\") \n| fields Group_ID, Application, ApplicationCI, Application_Owner, Environment, Function, Protected, K8s_Agent, K8s_Agent_Version, K8s_scanType, KSPM_Status, GcpNodeCount, xdm.asset.name as Name, xdm.asset.strong_id as ResourceID, xdm.asset.type.name as Type, xdm.asset.provider as Cloud, xdm.asset.cloud.region as Region, xdm.asset.realm as Cloud_Account, xdm.kubernetes.cluster.version as K8S_Version,  xdm.asset.tags as Tags, xdm.asset.last_observed as Last_Observed",
+                    "timePicker": [],
+                    "openInNewTab": true
+                  },
+                  "actionType": "open_xql_search"
+                },
+                "gridRawStorageInfo": {
+                  "sort": null,
+                  "coldefs": {},
+                  "rowHeight": "{\"rowHeight\":\"regular\",\"gridRowsHeight\":\"medium-row\"}",
+                  "columnWidth": null
+                }
+              }
+            },
+            {
+              "key": "xql_1761648815793",
+              "data": {
+                "type": "Custom XQL",
+                "width": 25,
+                "height": 683,
+                "params": [
+                  {
+                    "name": "FilteredGroup_ID",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredApplication",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredApplication_Owner",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredEnvironment",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredRealm",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredProvider",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredProtected",
+                    "value": "*"
+                  }
+                ],
+                "phrase": "dataset = asset_inventory\n\n| filter xdm.asset.type.category = \"Serverless Function\"\n| alter Function_Scan  = xdm.asset.raw_fields -> CWP[\"analysis-info_serverless_vulnerability_analyzer\"].scan_analysis_result\n| alter Function_Scan_Version  = xdm.asset.raw_fields -> CWP[\"analysis-info_serverless_vulnerability_analyzer\"].scanner_version\n| alter Function_Scan_Type  = xdm.asset.raw_fields -> CWP[\"analysis-info_serverless_vulnerability_analyzer\"].scanner_type\n| alter Function_Runtime = xdm.cloud.function.runtime\n| alter Function_Architecture = xdm.cloud.function.arch\n\n| alter Group_ID = coalesce(xdm.asset.tags -> [\"Group_ID\"], \"None\")\n| alter Application = coalesce(xdm.asset.tags -> [\"Application\"], \"None\")\n| alter ApplicationCI = coalesce(xdm.asset.tags -> [\"ApplicationCI\"], \"None\")\n| alter Application_Owner = coalesce(xdm.asset.tags -> [\"Application_Owner\"], \"None\")\n| alter Environment = coalesce(xdm.asset.tags -> [\"Environment\"], \"None\")\n| alter Function = coalesce(xdm.asset.tags -> [\"Function\"], \"None\")\n| alter Environment= uppercase(Environment)\n\n| filter Group_ID in ($FilteredGroup_ID)\n| filter Application in ($FilteredApplication)\n| filter Application_Owner in ($FilteredApplication_Owner)\n| filter Environment in ($FilteredEnvironment)\n| filter xdm.asset.realm in ($FilteredRealm)\n| filter xdm.asset.provider in ($FilteredProvider)\n| alter Function_Handler  = xdm.asset.raw_fields -> [\"Platform Discovery\"].Handler\n| alter Protected = if ( Function_Handler = \"cortex.handler\", \"Protected Function\",  Function_Handler = \"twistlock.handler\", \"Protected Function (Prisma)\",Function_Scan = \"success\", \"Agentless Scan\", Function_Scan = null , \"Not Scanned/Protected\") \n| filter Protected in ($FilteredProtected)\n\n| fields xdm.asset.name as Name, xdm.asset.strong_id as ResourceID,   xdm.asset.id as AssetID, xdm.asset.provider as Cloud, xdm.asset.cloud.region as Region, xdm.asset.realm as Cloud_Account, Protected, Function_Scan, Function\n\n| filter (Function not contains \"\"\"SDWAN\"\"\" and Function not contains \"\"\"Firewall\"\"\" and Function not contains \"\"\"Panorama\"\"\") \n| comp count (AssetID ) as Functions by protected\n| sort desc Functions \n\n\n\n\n\n\n\n\n\n\n\n| view graph type = pie xaxis = protected yaxis = Functions valuecolor(\"Not Scanned/Protected\",\"#ec0101\") valuecolor(\"Agentless Scan\",\"#5400ff\") ",
+                "time_frame": {
+                  "relativeTime": 86400000
+                },
+                "viewOptions": {
+                  "type": "pie",
+                  "commands": [
+                    {
+                      "command": {
+                        "op": "=",
+                        "name": "xaxis",
+                        "value": "protected"
+                      }
+                    },
+                    {
+                      "command": {
+                        "op": "=",
+                        "name": "yaxis",
+                        "value": "Functions"
+                      }
+                    },
+                    {
+                      "func": {
+                        "args": [
+                          "Not Scanned/Protected",
+                          "#ec0101"
+                        ],
+                        "name": "valuecolor"
+                      }
+                    },
+                    {
+                      "func": {
+                        "args": [
+                          "Agentless Scan",
+                          "#5400ff"
+                        ],
+                        "name": "valuecolor"
+                      }
+                    }
+                  ]
+                },
+                "drilldown_config": {
+                  "actionData": {
+                    "timeRange": "dashboard_timeframe",
+                    "xqlPhrase": "dataset = asset_inventory\n\n| filter xdm.asset.type.category = \"Serverless Function\"\n| alter Function_Scan  = xdm.asset.raw_fields -> CWP[\"analysis-info_serverless_vulnerability_analyzer\"].scan_analysis_result\n| alter Function_Scan_Version  = xdm.asset.raw_fields -> CWP[\"analysis-info_serverless_vulnerability_analyzer\"].scanner_version\n| alter Function_Scan_Type  = xdm.asset.raw_fields -> CWP[\"analysis-info_serverless_vulnerability_analyzer\"].scanner_type\n| alter Function_Runtime = xdm.cloud.function.runtime\n| alter Function_Architecture = xdm.cloud.function.arch\n| alter Group_ID = coalesce(xdm.asset.tags -> [\"Group_ID\"], \"None\")\n| alter Application = coalesce(xdm.asset.tags -> [\"Application\"], \"None\")\n| alter ApplicationCI = coalesce(xdm.asset.tags -> [\"ApplicationCI\"], \"None\")\n| alter Application_Owner = coalesce(xdm.asset.tags -> [\"Application_Owner\"], \"None\")\n| alter Environment = coalesce(xdm.asset.tags -> [\"Environment\"], \"None\")\n| alter Function = coalesce(xdm.asset.tags -> [\"Function\"], \"None\")\n| alter Protected = if (Function_Scan = \"success\", \"Scanned\",  Function_Scan = null , \"Not Scanned/Protected\") \n\n| filter $x_axis.value = Protected \n\n| fields Group_ID, Application, ApplicationCI, Application_Owner, Environment, Function, xdm.asset.name as Name, Protected, Function_Scan, Function_Scan_Version, Function_Scan_Type, Function_Runtime, Function_Architecture, xdm.asset.strong_id as ResourceID, xdm.asset.type.name as Type, xdm.asset.provider as Cloud, xdm.asset.cloud.region as Region, xdm.asset.realm as Cloud_Account,  xdm.asset.tags as Tags, xdm.asset.last_observed as Last_Observed\n",
+                    "timePicker": [],
+                    "openInNewTab": true
+                  },
+                  "actionType": "open_xql_search"
+                },
+                "gridRawStorageInfo": {
+                  "sort": null,
+                  "coldefs": {},
+                  "rowHeight": "{\"rowHeight\":\"regular\",\"gridRowsHeight\":\"medium-row\"}",
+                  "columnWidth": null
+                }
+              }
+            },
+            {
+              "key": "xql_1762351534313",
+              "data": {
+                "type": "Custom XQL",
+                "width": 25,
+                "height": 683,
+                "params": [
+                  {
+                    "name": "FilteredProtected",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredGroup_ID",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredApplication",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredApplication_Owner",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredEnvironment",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredRealm",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredProvider",
+                    "value": "*"
+                  }
+                ],
+                "phrase": "dataset = asset_inventory\n| filter xdm.asset.type.name in (\"Container Instance\")\n| alter Scan_Status  = xdm.asset.raw_fields -> CWP[\"analysis-info_agentless_vulnerability_analyzer\"].scan_analysis_result\n| alter Protected = if (Scan_Status = \"success\", \"Agentless Scan\", Scan_Status = null , \"Not Scanned/Protected\") \n| alter Group_ID = coalesce(xdm.asset.tags -> [\"Group_ID\"], \"None\")\n| alter Application = coalesce(xdm.asset.tags -> [\"Application\"], \"None\")\n| alter ApplicationCI = coalesce(xdm.asset.tags -> [\"ApplicationCI\"], \"None\")\n| alter Application_Owner = coalesce(xdm.asset.tags -> [\"Application_Owner\"], \"None\")\n| alter Environment = coalesce(xdm.asset.tags -> [\"Environment\"], \"None\")\n| alter Environment= uppercase(Environment)\n| alter Function = coalesce(xdm.asset.tags -> [\"Function\"], \"None\")\n| filter Protected in ($FilteredProtected)\n\n| filter Group_ID in ($FilteredGroup_ID)\n| filter Application in ($FilteredApplication)\n| filter Application_Owner in ($FilteredApplication_Owner)\n| filter Environment in ($FilteredEnvironment)\n| filter xdm.asset.realm in ($FilteredRealm)\n| filter xdm.asset.provider in ($FilteredProvider)\n\n| fields Protected, xdm.asset.name as Name, xdm.host.hostname as Hostname, xdm.asset.strong_id as ResourceID,  xdm.asset.id as AssetID, xdm.asset.type.name as Type, xdm.asset.provider as Cloud, xdm.asset.realm as Cloud_Account, xdm.asset.cloud.region as Cloud_Region, xdm.image.labels as Labels, xdm.image.os as OS, xdm.image.os_distribution as Distribution, xdm.image.os_family as OS_Family, xdm.image.os_release as OS_Release, xdm.kubernetes.namespace.name as Namespace, xdm.asset.last_observed as Last_Observed, Group_ID, Application, ApplicationCI, Application_Owner, Environment, Function\n\n| comp count (AssetID ) as Containers by protected\n| sort desc Protected    \n\n\n| view graph type = pie xaxis = protected yaxis = Containers valuecolor(\"Agentless Scan\",\"#5400ff\") ",
+                "time_frame": {
+                  "relativeTime": 86400000
+                },
+                "viewOptions": {
+                  "type": "pie",
+                  "commands": [
+                    {
+                      "command": {
+                        "op": "=",
+                        "name": "xaxis",
+                        "value": "protected"
+                      }
+                    },
+                    {
+                      "command": {
+                        "op": "=",
+                        "name": "yaxis",
+                        "value": "Containers"
+                      }
+                    },
+                    {
+                      "func": {
+                        "args": [
+                          "Agentless Scan",
+                          "#5400ff"
+                        ],
+                        "name": "valuecolor"
+                      }
+                    }
+                  ]
+                },
+                "drilldown_config": {
+                  "actionData": {
+                    "timeRange": "dashboard_timeframe",
+                    "xqlPhrase": "dataset = asset_inventory\n| filter xdm.asset.type.name in (\"Container Instance\")\n| alter Scan_Status  = xdm.asset.raw_fields -> CWP[\"analysis-info_agentless_vulnerability_analyzer\"].scan_analysis_result\n| alter Protected = if (Scan_Status = \"success\", \"Agentless Scan\", Scan_Status = null , \"Not Scanned/Protected\") \n| alter Group_ID = coalesce(xdm.asset.tags -> [\"Group_ID\"], \"None\")\n| alter Application = coalesce(xdm.asset.tags -> [\"Application\"], \"None\")\n| alter ApplicationCI = coalesce(xdm.asset.tags -> [\"ApplicationCI\"], \"None\")\n| alter Application_Owner = coalesce(xdm.asset.tags -> [\"Application_Owner\"], \"None\")\n| alter Environment = coalesce(xdm.asset.tags -> [\"Environment\"], \"None\")\n| alter Environment= uppercase(Environment)\n| alter Function = coalesce(xdm.asset.tags -> [\"Function\"], \"None\")\n\n| fields Protected, xdm.asset.name as Name, xdm.host.hostname as Hostname, xdm.asset.strong_id as ResourceID, xdm.asset.type.name as Type, xdm.asset.provider as Cloud, xdm.asset.realm as Cloud_Account, xdm.asset.cloud.region as Cloud_Region, xdm.image.labels as Labels, xdm.image.os as OS, xdm.image.os_distribution as Distribution, xdm.image.os_family as OS_Family, xdm.image.os_release as OS_Release, xdm.kubernetes.namespace.name as Namespace, xdm.asset.last_observed as Last_Observed, Group_ID, Application, ApplicationCI, Application_Owner, Environment, Function\n",
+                    "timePicker": [],
+                    "openInNewTab": true
+                  },
+                  "actionType": "open_xql_search"
+                },
+                "gridRawStorageInfo": {
+                  "sort": "{\"colId\":\"Protected\",\"sort\":\"desc\"}",
+                  "coldefs": {},
+                  "rowHeight": "{\"rowHeight\":\"stretch\",\"gridRowsHeight\":\"high-row\"}",
+                  "columnWidth": "\"stretch\""
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "row-5018",
+          "data": [
+            {
+              "key": "xql_1761222512993",
+              "data": {
+                "type": "Custom XQL",
+                "width": 100,
+                "height": 400,
+                "params": [
+                  {
+                    "name": "FilteredGroup_ID",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredApplication",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredApplication_Owner",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredEnvironment",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredRealm",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredProvider",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredProtected",
+                    "value": "*"
+                  }
+                ],
+                "phrase": "dataset = asset_inventory\n| filter xdm.asset.type.category = \"VM Instance\"\n// | filter xdm.asset.realm != \"ON_PREM\"\n\n| alter scanType = xdm.asset.raw_fields -> CWP[\"analysis-info_csa_vulnerability_analyzer\"].scanner_type\n| alter Agentless = xdm.asset.raw_fields -> CWP[\"analysis-info_agentless_vulnerability_analyzer\"].scanner_type\n| alter agentType =  xdm.asset.normalized_fields -> [\"xdm.agent.type\"]\n| alter Group_ID = coalesce(xdm.asset.tags -> [\"Group_ID\"], \"None\")\n| alter Application = coalesce(xdm.asset.tags -> [\"Application\"], \"None\")\n| alter ApplicationCI = coalesce(xdm.asset.tags -> [\"ApplicationCI\"], \"None\")\n| alter Application_Owner = coalesce(xdm.asset.tags -> [\"Application_Owner\"], \"None\")\n| alter Environment = coalesce(xdm.asset.tags -> [\"Environment\"], \"None\")\n| alter Function = coalesce(xdm.asset.tags -> [\"Function\"], \"None\")\n| alter Environment= uppercase(Environment)\n\n| filter Group_ID in ($FilteredGroup_ID)\n| filter Application in ($FilteredApplication)\n| filter Application_Owner in ($FilteredApplication_Owner)\n| filter Environment in ($FilteredEnvironment)\n| filter xdm.asset.realm in ($FilteredRealm)\n| filter xdm.asset.provider in ($FilteredProvider)\n| alter K8S_Cluster = xdm.kubernetes.cluster.name\n| alter Protected = if (K8S_Cluster != null and agentType = \"CLOUD\", \"Protected K8S Node\", K8S_Cluster != null, \"Unprotected K8S Node\", agentType in (\"CLOUD\", \"REGULAR\"), \"Protected VM\", Agentless = \"agentless\", \"Agentless Scan\", agentType = null , \"Not Scanned/Protected\") \n// | filter xdm.asset.cloud.region != null\n| filter Protected in ($FilteredProtected)\n\n| fields Group_ID, Application, ApplicationCI, Application_Owner, Environment, Function, Protected, Agentless, xdm.asset.name as Name, xdm.asset.strong_id as ResourceID, xdm.asset.type.name as Type, xdm.asset.provider as Cloud, xdm.asset.cloud.region as Region, xdm.asset.realm as Cloud_Account, xdm.host.os as OS_Version, xdm.host.os_family as OS_Family, xdm.host.state as State, scanType, agentType, K8S_Cluster, xdm.agent.type as XDR_Agent_Type, xdm.agent.version as XDR_Agent_Version,  xdm.asset.tags as Tags, xdm.asset.last_observed as Last_Observed\n\n\n| filter (Function not contains \"\"\"SDWAN\"\"\" and Function not contains \"\"\"Firewall\"\"\" and Function not contains \"\"\"Panorama\"\"\")",
+                "entityType": "xql-widget-table-eaa5a968-c333-4e5f-b239-05b740f0dbd9",
+                "time_frame": {
+                  "relativeTime": 86400000
+                },
+                "viewOptions": {
+                  "type": "table",
+                  "commands": []
+                },
+                "gridRawStorageInfo": {
+                  "sort": "{\"colId\":\"Cloud\",\"sort\":\"desc\"}",
+                  "coldefs": {},
+                  "rowHeight": "{\"rowHeight\":\"stretch\",\"gridRowsHeight\":\"high-row\"}",
+                  "columnWidth": "\"stretch\""
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "row-506",
+          "data": [
+            {
+              "key": "xql_1761586630914",
+              "data": {
+                "type": "Custom XQL",
+                "width": 100,
+                "height": 404,
+                "params": [
+                  {
+                    "name": "FilteredGroup_ID",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredApplication",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredApplication_Owner",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredEnvironment",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredRealm",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredProvider",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredProtected",
+                    "value": "*"
+                  }
+                ],
+                "phrase": "dataset = asset_inventory\n| filter xdm.asset.type.category  = \"Kubernetes Cluster\"\n| filter xdm.asset.type.name not in (\"ECS Clusters\")\n// | filter xdm.asset.type.name in (\"Amazon EKS\", \"Azure Kubernetes Cluster\", \"Google Kubernetes Engine Container Cluster\", \"Generic Kubernetes Cluster\")\n| alter K8s_Scan  = xdm.asset.raw_fields -> CWP[\"analysis-info_k8s_compliance_publisher\"].scan_analysis_result\n| alter K8s_Agent  = xdm.asset.raw_fields -> CWP[\"analysis-info_k8s_malware_analyzer\"].scan_analysis_result\n| alter K8s_Agent_Version  = xdm.asset.raw_fields -> CWP[\"analysis-info_k8s_compliance_publisher\"].scanner_version\n| alter K8s_scanType  = xdm.asset.raw_fields -> CWP[\"analysis-info_k8s_compliance_publisher\"].scanner_type\n// GCP Only\n| alter GcpNodeCount  = xdm.asset.raw_fields -> [\"Platform Discovery\"].currentNodeCount\n| alter KSPM_Status =  xdm.asset.normalized_fields -> [ \"xdm.kubernetes.connector.status\"]\n\n| alter Group_ID = coalesce(xdm.asset.tags -> [\"Group_ID\"], \"None\")\n| alter Application = coalesce(xdm.asset.tags -> [\"Application\"], \"None\")\n| alter ApplicationCI = coalesce(xdm.asset.tags -> [\"ApplicationCI\"], \"None\")\n| alter Application_Owner = coalesce(xdm.asset.tags -> [\"Application_Owner\"], \"None\")\n| alter Environment = coalesce(xdm.asset.tags -> [\"Environment\"], \"None\")\n| alter Environment= uppercase(Environment)\n| alter Function = coalesce(xdm.asset.tags -> [\"Function\"], \"None\")\n\n| filter Group_ID in ($FilteredGroup_ID)\n| filter Application in ($FilteredApplication)\n| filter Application_Owner in ($FilteredApplication_Owner)\n| filter Environment in ($FilteredEnvironment)\n| filter xdm.asset.realm in ($FilteredRealm)\n| filter xdm.asset.provider in ($FilteredProvider)\n\n| alter Protected = if (\nK8s_Agent = \"success\" and xdm.kubernetes.connector.status = \"connected\", \"Protected_KSPM\", \nK8s_Agent = \"success\", \"Protected_No_KSPM\", \nK8s_Scan = \"success\" and xdm.kubernetes.connector.status = \"connected\", \"Scanned_KSPM\",  \nK8s_Scan = \"success\", \"Scanned_No_KSPM\", \nK8s_Scan != \"success\" and xdm.kubernetes.connector.status = \"connected\", \"Not Scanned/Protected_KSPM\", \nK8s_Scan = null , \"Not Scanned/Protected\") \n| filter Protected in ($FilteredProtected)\n\n\n| fields Group_ID, Application, ApplicationCI, Application_Owner, Environment, Function, Protected, K8s_Agent, K8s_Agent_Version, K8s_scanType, KSPM_Status, GcpNodeCount, xdm.asset.name as Name, xdm.asset.strong_id as ResourceID, xdm.asset.type.name as Type, xdm.asset.provider as Cloud, xdm.asset.cloud.region as Region, xdm.asset.realm as Cloud_Account, xdm.kubernetes.cluster.version as K8S_Version,  xdm.asset.tags as Tags, xdm.asset.last_observed as Last_Observed",
+                "entityType": "xql-widget-table-c14317d9-f309-41d0-8c57-1497a71da826",
+                "time_frame": {
+                  "relativeTime": 86400000
+                },
+                "viewOptions": {
+                  "type": "table",
+                  "commands": []
+                },
+                "gridRawStorageInfo": {
+                  "sort": "{\"colId\":\"K8s_Agent\",\"sort\":\"desc\"}",
+                  "coldefs": {},
+                  "rowHeight": "{\"rowHeight\":\"stretch\",\"gridRowsHeight\":\"high-row\"}",
+                  "columnWidth": "\"stretch\""
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "row-6804",
+          "data": [
+            {
+              "key": "xql_1761648882968",
+              "data": {
+                "type": "Custom XQL",
+                "width": 100,
+                "height": 400,
+                "params": [
+                  {
+                    "name": "FilteredProtected",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredGroup_ID",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredApplication",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredApplication_Owner",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredEnvironment",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredRealm",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredProvider",
+                    "value": "*"
+                  }
+                ],
+                "phrase": "dataset = asset_inventory\n\n| filter xdm.asset.type.category = \"Serverless Function\"\n| alter Function_Scan  = xdm.asset.raw_fields -> CWP[\"analysis-info_serverless_vulnerability_analyzer\"].scan_analysis_result\n| alter Function_Scan_Version  = xdm.asset.raw_fields -> CWP[\"analysis-info_serverless_vulnerability_analyzer\"].scanner_version\n| alter Function_Scan_Type  = xdm.asset.raw_fields -> CWP[\"analysis-info_serverless_vulnerability_analyzer\"].scanner_type\n| alter Function_Runtime = xdm.cloud.function.runtime\n| alter Function_Architecture = xdm.cloud.function.arch\n| alter Group_ID = coalesce(xdm.asset.tags -> [\"Group_ID\"], \"None\")\n| alter Application = coalesce(xdm.asset.tags -> [\"Application\"], \"None\")\n| alter ApplicationCI = coalesce(xdm.asset.tags -> [\"ApplicationCI\"], \"None\")\n| alter Application_Owner = coalesce(xdm.asset.tags -> [\"Application_Owner\"], \"None\")\n| alter Environment = coalesce(xdm.asset.tags -> [\"Environment\"], \"None\")\n| alter Environment= uppercase(Environment)\n| alter Function = coalesce(xdm.asset.tags -> [\"Function\"], \"None\")\n| alter Function_Handler  = xdm.asset.raw_fields -> [\"Platform Discovery\"].Handler\n| alter Protected = if ( Function_Handler = \"cortex.handler\", \"Protected Function\",  Function_Handler = \"twistlock.handler\", \"Protected Function(Prisma)\",Function_Scan = \"success\", \"Agentless Scan\", Function_Scan = null , \"Not Scanned/Protected\") \n| filter Protected in ($FilteredProtected)\n\n| filter Group_ID in ($FilteredGroup_ID)\n| filter Application in ($FilteredApplication)\n| filter Application_Owner in ($FilteredApplication_Owner)\n| filter Environment in ($FilteredEnvironment)\n| filter xdm.asset.realm in ($FilteredRealm)\n| filter xdm.asset.provider in ($FilteredProvider)\n\n| fields Group_ID, Application, ApplicationCI, Application_Owner, Environment, Function, xdm.asset.name as Name, Protected, Function_Scan, Function_Scan_Version, Function_Scan_Type, Function_Runtime, Function_Architecture, xdm.asset.strong_id as ResourceID, xdm.asset.type.name as Type, xdm.asset.provider as Cloud, xdm.asset.cloud.region as Region, xdm.asset.realm as Cloud_Account,  xdm.asset.tags as Tags, xdm.asset.last_observed as Last_Observed",
+                "entityType": "xql-widget-table-0e88bd38-d53d-42a5-9b97-c8a94b94e535",
+                "time_frame": {
+                  "relativeTime": 86400000
+                },
+                "viewOptions": {
+                  "type": "table",
+                  "commands": []
+                },
+                "gridRawStorageInfo": {
+                  "sort": "{\"colId\":\"Function_Scan\",\"sort\":\"asc\"}",
+                  "coldefs": {},
+                  "rowHeight": "{\"rowHeight\":\"stretch\",\"gridRowsHeight\":\"high-row\"}",
+                  "columnWidth": "\"stretch\""
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "row-6294",
+          "data": [
+            {
+              "key": "xql_1762284581230",
+              "data": {
+                "type": "Custom XQL",
+                "width": 100,
+                "height": 396,
+                "params": [
+                  {
+                    "name": "FilteredProtected",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredGroup_ID",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredApplication",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredApplication_Owner",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredEnvironment",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredRealm",
+                    "value": "*"
+                  },
+                  {
+                    "name": "FilteredProvider",
+                    "value": "*"
+                  }
+                ],
+                "phrase": "dataset = asset_inventory\n| filter xdm.asset.type.name in (\"Container Instance\")\n| alter Scan_Status  = xdm.asset.raw_fields -> CWP[\"analysis-info_agentless_vulnerability_analyzer\"].scan_analysis_result\n| alter Protected = if (Scan_Status = \"success\", \"Agentless Scan\", Scan_Status = null , \"Not Scanned/Protected\") \n| alter Group_ID = coalesce(xdm.asset.tags -> [\"Group_ID\"], \"None\")\n| alter Application = coalesce(xdm.asset.tags -> [\"Application\"], \"None\")\n| alter ApplicationCI = coalesce(xdm.asset.tags -> [\"ApplicationCI\"], \"None\")\n| alter Application_Owner = coalesce(xdm.asset.tags -> [\"Application_Owner\"], \"None\")\n| alter Environment = coalesce(xdm.asset.tags -> [\"Environment\"], \"None\")\n| alter Environment= uppercase(Environment)\n| alter Function = coalesce(xdm.asset.tags -> [\"Function\"], \"None\")\n| filter Protected in ($FilteredProtected)\n\n| filter Group_ID in ($FilteredGroup_ID)\n| filter Application in ($FilteredApplication)\n| filter Application_Owner in ($FilteredApplication_Owner)\n| filter Environment in ($FilteredEnvironment)\n| filter xdm.asset.realm in ($FilteredRealm)\n| filter xdm.asset.provider in ($FilteredProvider)\n\n| fields Protected, xdm.asset.name as Name, xdm.host.hostname as Hostname, xdm.kubernetes.namespace.name as Namespace, xdm.asset.strong_id as ResourceID, xdm.asset.id as AssetID, xdm.asset.type.name as Type, xdm.asset.provider as Cloud, xdm.asset.realm as Cloud_Account, xdm.asset.cloud.region as Cloud_Region, xdm.image.labels as Labels, xdm.image.os as OS, xdm.image.os_distribution as Distribution, xdm.image.os_family as OS_Family, xdm.image.os_release as OS_Release, xdm.asset.last_observed as Last_Observed, Group_ID, Application, ApplicationCI, Application_Owner, Environment, Function",
+                "entityType": "xql-widget-table-b5f8d115-af41-4940-8b44-bed8386c7d0c",
+                "time_frame": {
+                  "relativeTime": 86400000
+                },
+                "viewOptions": {
+                  "type": "table",
+                  "commands": []
+                },
+                "gridRawStorageInfo": {
+                  "sort": "{\"colId\":\"Protected\",\"sort\":\"desc\"}",
+                  "coldefs": {},
+                  "rowHeight": "{\"rowHeight\":\"stretch\",\"gridRowsHeight\":\"high-row\"}",
+                  "columnWidth": "\"stretch\""
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "default_dashboard_id": 3,
+      "global_id": "",
+      "metadata": {
+        "params": [
+          {
+            "name": "FilteredProvider",
+            "type": "STATIC",
+            "title": "Cloud",
+            "value": "",
+            "valueOptions": [
+              "AWS",
+              "GCP",
+              "AZURE",
+              "OCI"
+            ],
+            "investigation": null,
+            "filterComponentType": "SINGLE_SELECT"
+          },
+          {
+            "name": "FilteredRealm",
+            "type": "DYNAMIC",
+            "title": "Account",
+            "value": [],
+            "executionID": "e2c8192e48c54f_5114264_inv",
+            "valueOptions": [],
+            "investigation": {
+              "ttl": "0",
+              "timeframe": {
+                "relativeTime": 86400000
+              },
+              "input_dict": {
+                "xql": "dataset = asset_inventory \n| fields xdm.asset.realm\n| dedup xdm.asset.realm\n| sort asc xdm.asset.realm\n\n",
+                "tenants": [],
+                "schedule": null,
+                "query_editor": "xql",
+                "notification_link": "xql/xql-search/_EXECUTION_ID_",
+                "run_in_background": false,
+                "query_definition_name": "XQL-QUERY-929599"
+              },
+              "query_source_metadata": {
+                "source": "investigation"
+              }
+            },
+            "investigationError": null,
+            "filterComponentType": "MULTI_SELECT",
+            "investigationColumn": "xdm.asset.realm"
+          },
+          {
+            "name": "FilteredGroup_ID",
+            "type": "DYNAMIC",
+            "title": "Group",
+            "value": [],
+            "executionID": "8dac105792d54a_5114263_inv",
+            "valueOptions": [],
+            "investigation": {
+              "ttl": "0",
+              "timeframe": {
+                "relativeTime": 86400000
+              },
+              "input_dict": {
+                "xql": "dataset = asset_inventory \n| alter Group_ID = xdm.asset.tags -> [\"Group_ID\"]\n| fields Group_ID\n| dedup Group_ID\n| sort asc Group_ID\n",
+                "tenants": [],
+                "schedule": null,
+                "query_editor": "xql",
+                "notification_link": "xql/xql-search/_EXECUTION_ID_",
+                "run_in_background": false,
+                "query_definition_name": "XQL-QUERY-929666"
+              },
+              "query_source_metadata": {
+                "source": "investigation"
+              }
+            },
+            "investigationError": null,
+            "filterComponentType": "MULTI_SELECT",
+            "investigationColumn": "Group_ID"
+          },
+          {
+            "name": "FilteredApplication",
+            "type": "DYNAMIC",
+            "title": "Application",
+            "value": [],
+            "executionID": "6e3de3e23b6a49_5114262_inv",
+            "valueOptions": [],
+            "investigation": {
+              "ttl": "0",
+              "timeframe": {
+                "relativeTime": 86400000
+              },
+              "input_dict": {
+                "xql": "dataset = asset_inventory \n| alter Application = xdm.asset.tags -> [\"Application\"]\n| fields Application\n| dedup Application\n| sort asc Application\n\n// | alter Group_ID = xdm.asset.tags -> [\"Group_ID\"]\n// | alter Application = xdm.asset.tags -> [\"Application\"]\n// | alter Application_Owner = xdm.asset.tags -> [\"Application_Owner\"]\n// | alter Environment = xdm.asset.tags -> [\"Environment\"]",
+                "tenants": [],
+                "schedule": null,
+                "query_editor": "xql",
+                "notification_link": "xql/xql-search/_EXECUTION_ID_",
+                "run_in_background": false,
+                "query_definition_name": "XQL-QUERY-929697"
+              },
+              "query_source_metadata": {
+                "source": "investigation"
+              }
+            },
+            "investigationError": null,
+            "filterComponentType": "MULTI_SELECT",
+            "investigationColumn": "Application"
+          },
+          {
+            "name": "FilteredApplication_Owner",
+            "type": "DYNAMIC",
+            "title": "Owner",
+            "value": [],
+            "executionID": "25b1d0bd61cb45_5114265_inv",
+            "valueOptions": [],
+            "investigation": {
+              "ttl": "0",
+              "timeframe": {
+                "relativeTime": 86400000
+              },
+              "input_dict": {
+                "xql": "dataset = asset_inventory \n| alter Application_Owner = xdm.asset.tags -> [\"Application_Owner\"]\n| fields Application_Owner\n| dedup Application_Owner\n| sort asc Application_Owner\n\n// | alter Group_ID = xdm.asset.tags -> [\"Group_ID\"]\n// | alter Application = xdm.asset.tags -> [\"Application\"]\n// | alter Application_Owner = xdm.asset.tags -> [\"Application_Owner\"]\n// | alter Environment = xdm.asset.tags -> [\"Environment\"]",
+                "tenants": [],
+                "schedule": null,
+                "query_editor": "xql",
+                "notification_link": "xql/xql-search/_EXECUTION_ID_",
+                "run_in_background": false,
+                "query_definition_name": "XQL-QUERY-929722"
+              },
+              "query_source_metadata": {
+                "source": "investigation"
+              }
+            },
+            "investigationError": null,
+            "filterComponentType": "MULTI_SELECT",
+            "investigationColumn": "Application_Owner"
+          },
+          {
+            "name": "FilteredEnvironment",
+            "type": "DYNAMIC",
+            "title": "Environment",
+            "value": [],
+            "executionID": "4be0d95ec4c049_5114261_inv",
+            "valueOptions": [],
+            "investigation": {
+              "ttl": "0",
+              "timeframe": {
+                "relativeTime": 86400000
+              },
+              "input_dict": {
+                "xql": "dataset = asset_inventory \n| alter Environment = xdm.asset.tags -> [\"Environment\"]\n| alter Environment = uppercase(Environment)\n\n| fields Environment\n| dedup Environment\n| sort asc Environment\n\n// | alter Group_ID = xdm.asset.tags -> [\"Group_ID\"]\n// | alter Application = xdm.asset.tags -> [\"Application\"]\n// | alter Application_Owner = xdm.asset.tags -> [\"Application_Owner\"]\n// | alter Environment = xdm.asset.tags -> [\"Environment\"]",
+                "tenants": [],
+                "schedule": null,
+                "query_editor": "xql",
+                "notification_link": "xql/xql-search/_EXECUTION_ID_",
+                "run_in_background": false,
+                "query_definition_name": "XQL-QUERY-2646390"
+              },
+              "query_source_metadata": {
+                "source": "investigation"
+              }
+            },
+            "investigationError": null,
+            "filterComponentType": "MULTI_SELECT",
+            "investigationColumn": "Environment"
+          },
+          {
+            "name": "FilteredProtected",
+            "type": "STATIC",
+            "title": "Protected",
+            "value": "",
+            "valueOptions": [
+              "Not Scanned/Protected",
+              "Agentless Scan",
+              "Protected VM",
+              "Protected K8S Node",
+              "Unprotected K8S Node",
+              "Not Supported",
+              "Protected Function",
+              "Protected_KSPM",
+              "Protected_No_KSPM",
+              "Scanned_No_KSPM",
+              "Scanned_KSPM"
+            ],
+            "investigation": null,
+            "filterComponentType": "MULTI_SELECT"
+          }
+        ]
+      }
+    }
+  ],
+  "widgets_data": [
+    {
+      "widget_key": "xql_1761221820805",
+      "title": "Cloud - VMs Scan/Protection Status",
+      "creation_time": 1762358150775,
+      "description": "Cloud - VMs Scan/Protection Status",
+      "data": {
+        "params": [
+          {
+            "name": "FilteredRealm",
+            "value": "*"
+          },
+          {
+            "name": "FilteredProvider",
+            "value": "*"
+          },
+          {
+            "name": "FilteredGroup_ID",
+            "value": "*"
+          },
+          {
+            "name": "FilteredApplication",
+            "value": "*"
+          },
+          {
+            "name": "FilteredApplication_Owner",
+            "value": "*"
+          },
+          {
+            "name": "FilteredEnvironment",
+            "value": "*"
+          },
+          {
+            "name": "FilteredProtected",
+            "value": "*"
+          }
+        ],
+        "phrase": "config timeframe = 24h\n| dataset = asset_inventory\n| filter xdm.asset.type.category = \"VM Instance\"\n// | filter xdm.asset.realm != \"ON_PREM\"\n| filter xdm.asset.realm in ($FilteredRealm)\n| filter xdm.asset.provider in ($FilteredProvider)\n| fields xdm.asset.name, xdm.asset.strong_id, xdm.asset.provider, xdm.asset.cloud.region, xdm.asset.realm, xdm.asset.type.name, xdm.asset.tags, xdm.asset.normalized_fields, xdm.asset.raw_fields, xdm.asset.last_observed, xdm.kubernetes.cluster.name\n| alter Group_ID = coalesce(xdm.asset.tags -> [\"Group_ID\"], \"None\")\n| alter Application = coalesce(xdm.asset.tags -> [\"Application\"], \"None\")\n| alter ApplicationCI = coalesce(xdm.asset.tags -> [\"ApplicationCI\"], \"None\")\n| alter Application_Owner = coalesce(xdm.asset.tags -> [\"Application_Owner\"], \"None\")\n| alter Environment = coalesce(xdm.asset.tags -> [\"Environment\"], \"None\")\n| alter Environment= uppercase(Environment)\n\n| alter Function = coalesce(xdm.asset.tags -> [\"Function\"], \"None\")\n| filter Group_ID in ($FilteredGroup_ID)\n| filter Application in ($FilteredApplication)\n| filter Application_Owner in ($FilteredApplication_Owner)\n| filter Environment in ($FilteredEnvironment)\n| filter Function not contains \"SDWAN\" and Function not contains \"Firewall\" and Function not contains \"Panorama\"\n| alter agentType = xdm.asset.normalized_fields -> [\"xdm.agent.type\"]\n| alter Agentless = xdm.asset.raw_fields -> CWP[\"analysis-info_agentless_vulnerability_analyzer\"].scanner_type\n| alter K8S_Cluster = xdm.kubernetes.cluster.name\n| alter Protected = if(K8S_Cluster != null and agentType = \"CLOUD\", \"Protected K8S Node\", K8S_Cluster != null, \"Unprotected K8S Node\", agentType in (\"CLOUD\", \"REGULAR\"), \"Protected VM\", Agentless = \"agentless\", \"Agentless Scan\", agentType = null, \"Not Scanned/Protected\")\n| filter Protected in ($FilteredProtected)\n| fields Group_ID, Application, ApplicationCI, Application_Owner, Environment, Function, Protected, xdm.asset.name as Name, xdm.asset.strong_id as ResourceID, xdm.asset.type.name as Type, xdm.asset.provider as Cloud, xdm.asset.cloud.region as Region, xdm.asset.realm as Cloud_Account, agentType, xdm.asset.tags as Tags, xdm.asset.last_observed as Last_Observed\n| comp count (ResourceID ) as VMs by protected\n| sort desc VMs   \n\n| view graph type = pie xaxis = protected yaxis = VMs valuecolor(\"Not Scanned/Protected\",\"#ec0101\") valuecolor(\"Agentless Scan\",\"#5400ff\") valuecolor(\"Protected VM\",\"#111fff\") valuecolor(\"Unprotected K8S Node\",\"#ff0037\") ",
+        "timeSpan": {
+          "toTime": "now",
+          "fromTime": "24h",
+          "isRelative": true
+        },
+        "time_frame": {
+          "relativeTime": 86400000
+        },
+        "viewOptions": {
+          "type": "pie",
+          "commands": [
+            {
+              "command": {
+                "op": "=",
+                "name": "xaxis",
+                "value": "protected"
+              }
+            },
+            {
+              "command": {
+                "op": "=",
+                "name": "yaxis",
+                "value": "VMs"
+              }
+            },
+            {
+              "func": {
+                "args": [
+                  "Not Scanned/Protected",
+                  "#ec0101"
+                ],
+                "name": "valuecolor"
+              }
+            },
+            {
+              "func": {
+                "args": [
+                  "Agentless Scan",
+                  "#5400ff"
+                ],
+                "name": "valuecolor"
+              }
+            },
+            {
+              "func": {
+                "args": [
+                  "Protected VM",
+                  "#111fff"
+                ],
+                "name": "valuecolor"
+              }
+            },
+            {
+              "func": {
+                "args": [
+                  "Unprotected K8S Node",
+                  "#ff0037"
+                ],
+                "name": "valuecolor"
+              }
+            }
+          ]
+        },
+        "gridRawStorageInfo": {
+          "sort": null,
+          "coldefs": {},
+          "rowHeight": "{\"rowHeight\":\"regular\",\"gridRowsHeight\":\"medium-row\"}",
+          "columnWidth": "\"stretch\""
+        }
+      },
+      "support_time_range": true,
+      "additional_info": {
+        "query_tables": [
+          "asset_inventory"
+        ],
+        "query_uses_library": false
+      },
+      "creator_mail": ""
+    },
+    {
+      "widget_key": "xql_1761222512993",
+      "title": "Cloud - VMs Scan/Protection Status List",
+      "creation_time": 1762358151600,
+      "description": "Cloud - VMs Scan/Protection Status List",
+      "data": {
+        "params": [
+          {
+            "name": "FilteredGroup_ID",
+            "value": "*"
+          },
+          {
+            "name": "FilteredApplication",
+            "value": "*"
+          },
+          {
+            "name": "FilteredApplication_Owner",
+            "value": "*"
+          },
+          {
+            "name": "FilteredEnvironment",
+            "value": "*"
+          },
+          {
+            "name": "FilteredRealm",
+            "value": "*"
+          },
+          {
+            "name": "FilteredProvider",
+            "value": "*"
+          },
+          {
+            "name": "FilteredProtected",
+            "value": "*"
+          }
+        ],
+        "phrase": "dataset = asset_inventory\n| filter xdm.asset.type.category = \"VM Instance\"\n// | filter xdm.asset.realm != \"ON_PREM\"\n\n| alter scanType = xdm.asset.raw_fields -> CWP[\"analysis-info_csa_vulnerability_analyzer\"].scanner_type\n| alter Agentless = xdm.asset.raw_fields -> CWP[\"analysis-info_agentless_vulnerability_analyzer\"].scanner_type\n| alter agentType =  xdm.asset.normalized_fields -> [\"xdm.agent.type\"]\n| alter Group_ID = coalesce(xdm.asset.tags -> [\"Group_ID\"], \"None\")\n| alter Application = coalesce(xdm.asset.tags -> [\"Application\"], \"None\")\n| alter ApplicationCI = coalesce(xdm.asset.tags -> [\"ApplicationCI\"], \"None\")\n| alter Application_Owner = coalesce(xdm.asset.tags -> [\"Application_Owner\"], \"None\")\n| alter Environment = coalesce(xdm.asset.tags -> [\"Environment\"], \"None\")\n| alter Function = coalesce(xdm.asset.tags -> [\"Function\"], \"None\")\n| alter Environment= uppercase(Environment)\n\n| filter Group_ID in ($FilteredGroup_ID)\n| filter Application in ($FilteredApplication)\n| filter Application_Owner in ($FilteredApplication_Owner)\n| filter Environment in ($FilteredEnvironment)\n| filter xdm.asset.realm in ($FilteredRealm)\n| filter xdm.asset.provider in ($FilteredProvider)\n| alter K8S_Cluster = xdm.kubernetes.cluster.name\n| alter Protected = if (K8S_Cluster != null and agentType = \"CLOUD\", \"Protected K8S Node\", K8S_Cluster != null, \"Unprotected K8S Node\", agentType in (\"CLOUD\", \"REGULAR\"), \"Protected VM\", Agentless = \"agentless\", \"Agentless Scan\", agentType = null , \"Not Scanned/Protected\") \n// | filter xdm.asset.cloud.region != null\n| filter Protected in ($FilteredProtected)\n\n| fields Group_ID, Application, ApplicationCI, Application_Owner, Environment, Function, Protected, Agentless, xdm.asset.name as Name, xdm.asset.strong_id as ResourceID, xdm.asset.type.name as Type, xdm.asset.provider as Cloud, xdm.asset.cloud.region as Region, xdm.asset.realm as Cloud_Account, xdm.host.os as OS_Version, xdm.host.os_family as OS_Family, xdm.host.state as State, scanType, agentType, K8S_Cluster, xdm.agent.type as XDR_Agent_Type, xdm.agent.version as XDR_Agent_Version,  xdm.asset.tags as Tags, xdm.asset.last_observed as Last_Observed\n\n\n| filter (Function not contains \"\"\"SDWAN\"\"\" and Function not contains \"\"\"Firewall\"\"\" and Function not contains \"\"\"Panorama\"\"\")",
+        "time_frame": {
+          "relativeTime": 86400000
+        },
+        "viewOptions": {
+          "type": "table",
+          "commands": []
+        },
+        "gridRawStorageInfo": {
+          "sort": "{\"colId\":\"Cloud\",\"sort\":\"desc\"}",
+          "coldefs": {},
+          "rowHeight": "{\"rowHeight\":\"stretch\",\"gridRowsHeight\":\"high-row\"}",
+          "columnWidth": "\"stretch\""
+        }
+      },
+      "support_time_range": true,
+      "additional_info": {
+        "query_tables": [
+          "asset_inventory"
+        ],
+        "query_uses_library": false
+      },
+      "creator_mail": ""
+    },
+    {
+      "widget_key": "xql_1761586630914",
+      "title": "Cloud - K8S Clusters Scan/Protection Status - List",
+      "creation_time": 1762358152359,
+      "description": "Cloud - K8S Clusters Scan/Protection Status - List",
+      "data": {
+        "params": [
+          {
+            "name": "FilteredGroup_ID",
+            "value": "*"
+          },
+          {
+            "name": "FilteredApplication",
+            "value": "*"
+          },
+          {
+            "name": "FilteredApplication_Owner",
+            "value": "*"
+          },
+          {
+            "name": "FilteredEnvironment",
+            "value": "*"
+          },
+          {
+            "name": "FilteredRealm",
+            "value": "*"
+          },
+          {
+            "name": "FilteredProvider",
+            "value": "*"
+          },
+          {
+            "name": "FilteredProtected",
+            "value": "*"
+          }
+        ],
+        "phrase": "dataset = asset_inventory\n| filter xdm.asset.type.category  = \"Kubernetes Cluster\"\n| filter xdm.asset.type.name not in (\"ECS Clusters\")\n// | filter xdm.asset.type.name in (\"Amazon EKS\", \"Azure Kubernetes Cluster\", \"Google Kubernetes Engine Container Cluster\", \"Generic Kubernetes Cluster\")\n| alter K8s_Scan  = xdm.asset.raw_fields -> CWP[\"analysis-info_k8s_compliance_publisher\"].scan_analysis_result\n| alter K8s_Agent  = xdm.asset.raw_fields -> CWP[\"analysis-info_k8s_malware_analyzer\"].scan_analysis_result\n| alter K8s_Agent_Version  = xdm.asset.raw_fields -> CWP[\"analysis-info_k8s_compliance_publisher\"].scanner_version\n| alter K8s_scanType  = xdm.asset.raw_fields -> CWP[\"analysis-info_k8s_compliance_publisher\"].scanner_type\n// GCP Only\n| alter GcpNodeCount  = xdm.asset.raw_fields -> [\"Platform Discovery\"].currentNodeCount\n| alter KSPM_Status =  xdm.asset.normalized_fields -> [ \"xdm.kubernetes.connector.status\"]\n\n| alter Group_ID = coalesce(xdm.asset.tags -> [\"Group_ID\"], \"None\")\n| alter Application = coalesce(xdm.asset.tags -> [\"Application\"], \"None\")\n| alter ApplicationCI = coalesce(xdm.asset.tags -> [\"ApplicationCI\"], \"None\")\n| alter Application_Owner = coalesce(xdm.asset.tags -> [\"Application_Owner\"], \"None\")\n| alter Environment = coalesce(xdm.asset.tags -> [\"Environment\"], \"None\")\n| alter Environment= uppercase(Environment)\n| alter Function = coalesce(xdm.asset.tags -> [\"Function\"], \"None\")\n\n| filter Group_ID in ($FilteredGroup_ID)\n| filter Application in ($FilteredApplication)\n| filter Application_Owner in ($FilteredApplication_Owner)\n| filter Environment in ($FilteredEnvironment)\n| filter xdm.asset.realm in ($FilteredRealm)\n| filter xdm.asset.provider in ($FilteredProvider)\n\n| alter Protected = if (\nK8s_Agent = \"success\" and xdm.kubernetes.connector.status = \"connected\", \"Protected_KSPM\", \nK8s_Agent = \"success\", \"Protected_No_KSPM\", \nK8s_Scan = \"success\" and xdm.kubernetes.connector.status = \"connected\", \"Scanned_KSPM\",  \nK8s_Scan = \"success\", \"Scanned_No_KSPM\", \nK8s_Scan = null , \"Not Scanned/Protected\") \n| filter Protected in ($FilteredProtected)\n\n\n| fields Group_ID, Application, ApplicationCI, Application_Owner, Environment, Function, Protected, K8s_Agent, K8s_Agent_Version, K8s_scanType, KSPM_Status, GcpNodeCount, xdm.asset.name as Name, xdm.asset.strong_id as ResourceID, xdm.asset.type.name as Type, xdm.asset.provider as Cloud, xdm.asset.cloud.region as Region, xdm.asset.realm as Cloud_Account, xdm.kubernetes.cluster.version as K8S_Version,  xdm.asset.tags as Tags, xdm.asset.last_observed as Last_Observed",
+        "time_frame": {
+          "relativeTime": 86400000
+        },
+        "viewOptions": {
+          "type": "table",
+          "commands": []
+        },
+        "gridRawStorageInfo": {
+          "sort": "{\"colId\":\"K8s_Agent\",\"sort\":\"desc\"}",
+          "coldefs": {},
+          "rowHeight": "{\"rowHeight\":\"stretch\",\"gridRowsHeight\":\"high-row\"}",
+          "columnWidth": "\"stretch\""
+        }
+      },
+      "support_time_range": true,
+      "additional_info": {
+        "query_tables": [
+          "asset_inventory"
+        ],
+        "query_uses_library": false
+      },
+      "creator_mail": ""
+    },
+    {
+      "widget_key": "xql_1761588554049",
+      "title": "Cloud - K8S Clusters Scan/Protection Status",
+      "creation_time": 1762358152884,
+      "description": "Cloud - K8S Clusters Scan/Protection Status",
+      "data": {
+        "params": [
+          {
+            "name": "FilteredGroup_ID",
+            "value": "*"
+          },
+          {
+            "name": "FilteredApplication",
+            "value": "*"
+          },
+          {
+            "name": "FilteredApplication_Owner",
+            "value": "*"
+          },
+          {
+            "name": "FilteredEnvironment",
+            "value": "*"
+          },
+          {
+            "name": "FilteredRealm",
+            "value": "*"
+          },
+          {
+            "name": "FilteredProvider",
+            "value": "*"
+          },
+          {
+            "name": "FilteredProtected",
+            "value": "*"
+          }
+        ],
+        "phrase": "dataset = asset_inventory\n| filter xdm.asset.type.category  = \"Kubernetes Cluster\"\n| filter xdm.asset.type.name not in (\"ECS Clusters\")\n// | filter xdm.asset.type.name in (\"Amazon EKS\", \"Azure Kubernetes Cluster\", \"Google Kubernetes Engine Container Cluster\", \"Generic Kubernetes Cluster\")\n| alter K8s_Scan  = xdm.asset.raw_fields -> CWP[\"analysis-info_k8s_compliance_publisher\"].scan_analysis_result\n| alter K8s_Agent  = xdm.asset.raw_fields -> CWP[\"analysis-info_k8s_malware_analyzer\"].scan_analysis_result\n| alter K8s_Agent_Version  = xdm.asset.raw_fields -> CWP[\"analysis-info_k8s_compliance_publisher\"].scanner_version\n| alter K8s_scanType  = xdm.asset.raw_fields -> CWP[\"analysis-info_k8s_compliance_publisher\"].scanner_type\n// GCP Only\n| alter GcpNodeCount  = xdm.asset.raw_fields -> [\"Platform Discovery\"].currentNodeCount\n| alter KSPM_Status =  xdm.asset.normalized_fields -> [ \"xdm.kubernetes.connector.status\"]\n\n| alter Group_ID = coalesce(xdm.asset.tags -> [\"Group_ID\"], \"None\")\n| alter Application = coalesce(xdm.asset.tags -> [\"Application\"], \"None\")\n| alter ApplicationCI = coalesce(xdm.asset.tags -> [\"ApplicationCI\"], \"None\")\n| alter Application_Owner = coalesce(xdm.asset.tags -> [\"Application_Owner\"], \"None\")\n| alter Environment = coalesce(xdm.asset.tags -> [\"Environment\"], \"None\")\n| alter Environment= uppercase(Environment)\n| alter Function = coalesce(xdm.asset.tags -> [\"Function\"], \"None\")\n\n| filter Group_ID in ($FilteredGroup_ID)\n| filter Application in ($FilteredApplication)\n| filter Application_Owner in ($FilteredApplication_Owner)\n| filter Environment in ($FilteredEnvironment)\n| filter xdm.asset.realm in ($FilteredRealm)\n| filter xdm.asset.provider in ($FilteredProvider)\n\n| alter Protected = if (\nK8s_Agent = \"success\" and xdm.kubernetes.connector.status = \"connected\", \"Protected_KSPM\", \nK8s_Agent = \"success\", \"Protected_No_KSPM\", \nK8s_Scan = \"success\" and xdm.kubernetes.connector.status = \"connected\", \"Scanned_KSPM\",  \nK8s_Scan = \"success\", \"Scanned_No_KSPM\", \nK8s_Scan = null , \"Not Scanned/Protected\") \n| filter Protected in ($FilteredProtected)\n\n\n| fields Group_ID, Application, ApplicationCI, Application_Owner, Environment, Function, Protected, K8s_Agent, K8s_Agent_Version, K8s_scanType, KSPM_Status, GcpNodeCount, xdm.asset.name as Name, xdm.asset.strong_id as ResourceID, xdm.asset.type.name as Type, xdm.asset.provider as Cloud, xdm.asset.cloud.region as Region, xdm.asset.realm as Cloud_Account, xdm.kubernetes.cluster.version as K8S_Version,  xdm.asset.tags as Tags, xdm.asset.last_observed as Last_Observed\n| filter (Function not contains \"\"\"SDWAN\"\"\" and Function not contains \"\"\"Firewall\"\"\" and Function not contains \"\"\"Panorama\"\"\") \n| comp count (ResourceID ) as Clusters by protected\n| sort desc Clusters  \n\n\n\n\n| view graph type = pie xaxis = protected yaxis = Clusters valuecolor(\"Not Scanned/Protected\",\"#e51e0b\") ",
+        "time_frame": {
+          "relativeTime": 86400000
+        },
+        "viewOptions": {
+          "type": "pie",
+          "commands": [
+            {
+              "command": {
+                "op": "=",
+                "name": "xaxis",
+                "value": "protected"
+              }
+            },
+            {
+              "command": {
+                "op": "=",
+                "name": "yaxis",
+                "value": "Clusters"
+              }
+            },
+            {
+              "func": {
+                "args": [
+                  "Not Scanned/Protected",
+                  "#e51e0b"
+                ],
+                "name": "valuecolor"
+              }
+            }
+          ]
+        },
+        "gridRawStorageInfo": {
+          "sort": null,
+          "coldefs": {},
+          "rowHeight": "{\"rowHeight\":\"regular\",\"gridRowsHeight\":\"medium-row\"}",
+          "columnWidth": null
+        }
+      },
+      "support_time_range": true,
+      "additional_info": {
+        "query_tables": [
+          "asset_inventory"
+        ],
+        "query_uses_library": false
+      },
+      "creator_mail": ""
+    },
+    {
+      "widget_key": "xql_1761648815793",
+      "title": "Cloud - Functions Scan/Protection Status",
+      "creation_time": 1762358153263,
+      "description": "Cloud - Functions Scan/Protection Status",
+      "data": {
+        "params": [
+          {
+            "name": "FilteredGroup_ID",
+            "value": "*"
+          },
+          {
+            "name": "FilteredApplication",
+            "value": "*"
+          },
+          {
+            "name": "FilteredApplication_Owner",
+            "value": "*"
+          },
+          {
+            "name": "FilteredEnvironment",
+            "value": "*"
+          },
+          {
+            "name": "FilteredRealm",
+            "value": "*"
+          },
+          {
+            "name": "FilteredProvider",
+            "value": "*"
+          },
+          {
+            "name": "FilteredProtected",
+            "value": "*"
+          }
+        ],
+        "phrase": "dataset = asset_inventory\n\n| filter xdm.asset.type.category = \"Serverless Function\"\n| alter Function_Scan  = xdm.asset.raw_fields -> CWP[\"analysis-info_serverless_vulnerability_analyzer\"].scan_analysis_result\n| alter Function_Scan_Version  = xdm.asset.raw_fields -> CWP[\"analysis-info_serverless_vulnerability_analyzer\"].scanner_version\n| alter Function_Scan_Type  = xdm.asset.raw_fields -> CWP[\"analysis-info_serverless_vulnerability_analyzer\"].scanner_type\n| alter Function_Runtime = xdm.cloud.function.runtime\n| alter Function_Architecture = xdm.cloud.function.arch\n\n| alter Group_ID = coalesce(xdm.asset.tags -> [\"Group_ID\"], \"None\")\n| alter Application = coalesce(xdm.asset.tags -> [\"Application\"], \"None\")\n| alter ApplicationCI = coalesce(xdm.asset.tags -> [\"ApplicationCI\"], \"None\")\n| alter Application_Owner = coalesce(xdm.asset.tags -> [\"Application_Owner\"], \"None\")\n| alter Environment = coalesce(xdm.asset.tags -> [\"Environment\"], \"None\")\n| alter Function = coalesce(xdm.asset.tags -> [\"Function\"], \"None\")\n| alter Environment= uppercase(Environment)\n\n| filter Group_ID in ($FilteredGroup_ID)\n| filter Application in ($FilteredApplication)\n| filter Application_Owner in ($FilteredApplication_Owner)\n| filter Environment in ($FilteredEnvironment)\n| filter xdm.asset.realm in ($FilteredRealm)\n| filter xdm.asset.provider in ($FilteredProvider)\n| alter Function_Handler  = xdm.asset.raw_fields -> [\"Platform Discovery\"].Handler\n| alter Protected = if ( Function_Handler = \"cortex.handler\", \"Protected Function\",  Function_Handler = \"twistlock.handler\", \"Protected Function (Prisma)\",Function_Scan = \"success\", \"Agentless Scan\", Function_Scan = null , \"Not Scanned/Protected\") \n| filter Protected in ($FilteredProtected)\n\n| fields xdm.asset.name as Name, xdm.asset.strong_id as ResourceID,   xdm.asset.id as AssetID, xdm.asset.provider as Cloud, xdm.asset.cloud.region as Region, xdm.asset.realm as Cloud_Account, Protected, Function_Scan, Function\n\n| filter (Function not contains \"\"\"SDWAN\"\"\" and Function not contains \"\"\"Firewall\"\"\" and Function not contains \"\"\"Panorama\"\"\") \n| comp count (AssetID ) as Functions by protected\n| sort desc Functions \n\n\n\n\n\n\n\n\n\n\n\n| view graph type = pie xaxis = protected yaxis = Functions valuecolor(\"Not Scanned/Protected\",\"#ec0101\") valuecolor(\"Agentless Scan\",\"#5400ff\") ",
+        "time_frame": {
+          "relativeTime": 86400000
+        },
+        "viewOptions": {
+          "type": "pie",
+          "commands": [
+            {
+              "command": {
+                "op": "=",
+                "name": "xaxis",
+                "value": "protected"
+              }
+            },
+            {
+              "command": {
+                "op": "=",
+                "name": "yaxis",
+                "value": "Functions"
+              }
+            },
+            {
+              "func": {
+                "args": [
+                  "Not Scanned/Protected",
+                  "#ec0101"
+                ],
+                "name": "valuecolor"
+              }
+            },
+            {
+              "func": {
+                "args": [
+                  "Agentless Scan",
+                  "#5400ff"
+                ],
+                "name": "valuecolor"
+              }
+            }
+          ]
+        },
+        "gridRawStorageInfo": {
+          "sort": null,
+          "coldefs": {},
+          "rowHeight": "{\"rowHeight\":\"regular\",\"gridRowsHeight\":\"medium-row\"}",
+          "columnWidth": null
+        }
+      },
+      "support_time_range": true,
+      "additional_info": {
+        "query_tables": [
+          "asset_inventory"
+        ],
+        "query_uses_library": false
+      },
+      "creator_mail": ""
+    },
+    {
+      "widget_key": "xql_1761648882968",
+      "title": "Cloud - Functions Scan/Protection Status - List",
+      "creation_time": 1762358153972,
+      "description": "Cloud - Functions Scan/Protection Status - List",
+      "data": {
+        "params": [
+          {
+            "name": "FilteredProtected",
+            "value": "*"
+          },
+          {
+            "name": "FilteredGroup_ID",
+            "value": "*"
+          },
+          {
+            "name": "FilteredApplication",
+            "value": "*"
+          },
+          {
+            "name": "FilteredApplication_Owner",
+            "value": "*"
+          },
+          {
+            "name": "FilteredEnvironment",
+            "value": "*"
+          },
+          {
+            "name": "FilteredRealm",
+            "value": "*"
+          },
+          {
+            "name": "FilteredProvider",
+            "value": "*"
+          }
+        ],
+        "phrase": "dataset = asset_inventory\n\n| filter xdm.asset.type.category = \"Serverless Function\"\n| alter Function_Scan  = xdm.asset.raw_fields -> CWP[\"analysis-info_serverless_vulnerability_analyzer\"].scan_analysis_result\n| alter Function_Scan_Version  = xdm.asset.raw_fields -> CWP[\"analysis-info_serverless_vulnerability_analyzer\"].scanner_version\n| alter Function_Scan_Type  = xdm.asset.raw_fields -> CWP[\"analysis-info_serverless_vulnerability_analyzer\"].scanner_type\n| alter Function_Runtime = xdm.cloud.function.runtime\n| alter Function_Architecture = xdm.cloud.function.arch\n| alter Group_ID = coalesce(xdm.asset.tags -> [\"Group_ID\"], \"None\")\n| alter Application = coalesce(xdm.asset.tags -> [\"Application\"], \"None\")\n| alter ApplicationCI = coalesce(xdm.asset.tags -> [\"ApplicationCI\"], \"None\")\n| alter Application_Owner = coalesce(xdm.asset.tags -> [\"Application_Owner\"], \"None\")\n| alter Environment = coalesce(xdm.asset.tags -> [\"Environment\"], \"None\")\n| alter Environment= uppercase(Environment)\n| alter Function = coalesce(xdm.asset.tags -> [\"Function\"], \"None\")\n| alter Function_Handler  = xdm.asset.raw_fields -> [\"Platform Discovery\"].Handler\n| alter Protected = if ( Function_Handler = \"cortex.handler\", \"Protected Function\",  Function_Handler = \"twistlock.handler\", \"Protected Function(Prisma)\",Function_Scan = \"success\", \"Agentless Scan\", Function_Scan = null , \"Not Scanned/Protected\") \n| filter Protected in ($FilteredProtected)\n\n| filter Group_ID in ($FilteredGroup_ID)\n| filter Application in ($FilteredApplication)\n| filter Application_Owner in ($FilteredApplication_Owner)\n| filter Environment in ($FilteredEnvironment)\n| filter xdm.asset.realm in ($FilteredRealm)\n| filter xdm.asset.provider in ($FilteredProvider)\n\n| fields Group_ID, Application, ApplicationCI, Application_Owner, Environment, Function, xdm.asset.name as Name, Protected, Function_Scan, Function_Scan_Version, Function_Scan_Type, Function_Runtime, Function_Architecture, xdm.asset.strong_id as ResourceID, xdm.asset.type.name as Type, xdm.asset.provider as Cloud, xdm.asset.cloud.region as Region, xdm.asset.realm as Cloud_Account,  xdm.asset.tags as Tags, xdm.asset.last_observed as Last_Observed",
+        "time_frame": {
+          "relativeTime": 86400000
+        },
+        "viewOptions": {
+          "type": "table",
+          "commands": []
+        },
+        "gridRawStorageInfo": {
+          "sort": "{\"colId\":\"Function_Scan\",\"sort\":\"asc\"}",
+          "coldefs": {},
+          "rowHeight": "{\"rowHeight\":\"stretch\",\"gridRowsHeight\":\"high-row\"}",
+          "columnWidth": "\"stretch\""
+        }
+      },
+      "support_time_range": true,
+      "additional_info": {
+        "query_tables": [
+          "asset_inventory"
+        ],
+        "query_uses_library": false
+      },
+      "creator_mail": ""
+    },
+    {
+      "widget_key": "xql_1762284581230",
+      "title": "Cloud - Container Instance Status - List",
+      "creation_time": 1762358154659,
+      "description": "Cloud - Container Instance Status - List",
+      "data": {
+        "params": [
+          {
+            "name": "FilteredProtected",
+            "value": "*"
+          },
+          {
+            "name": "FilteredGroup_ID",
+            "value": "*"
+          },
+          {
+            "name": "FilteredApplication",
+            "value": "*"
+          },
+          {
+            "name": "FilteredApplication_Owner",
+            "value": "*"
+          },
+          {
+            "name": "FilteredEnvironment",
+            "value": "*"
+          },
+          {
+            "name": "FilteredRealm",
+            "value": "*"
+          },
+          {
+            "name": "FilteredProvider",
+            "value": "*"
+          }
+        ],
+        "phrase": "dataset = asset_inventory\n| filter xdm.asset.type.name in (\"Container Instance\")\n| alter Scan_Status  = xdm.asset.raw_fields -> CWP[\"analysis-info_agentless_vulnerability_analyzer\"].scan_analysis_result\n| alter Protected = if (Scan_Status = \"success\", \"Agentless Scan\", Scan_Status = null , \"Not Scanned/Protected\") \n| alter Group_ID = coalesce(xdm.asset.tags -> [\"Group_ID\"], \"None\")\n| alter Application = coalesce(xdm.asset.tags -> [\"Application\"], \"None\")\n| alter ApplicationCI = coalesce(xdm.asset.tags -> [\"ApplicationCI\"], \"None\")\n| alter Application_Owner = coalesce(xdm.asset.tags -> [\"Application_Owner\"], \"None\")\n| alter Environment = coalesce(xdm.asset.tags -> [\"Environment\"], \"None\")\n| alter Environment= uppercase(Environment)\n| alter Function = coalesce(xdm.asset.tags -> [\"Function\"], \"None\")\n| filter Protected in ($FilteredProtected)\n\n| filter Group_ID in ($FilteredGroup_ID)\n| filter Application in ($FilteredApplication)\n| filter Application_Owner in ($FilteredApplication_Owner)\n| filter Environment in ($FilteredEnvironment)\n| filter xdm.asset.realm in ($FilteredRealm)\n| filter xdm.asset.provider in ($FilteredProvider)\n\n| fields Protected, xdm.asset.name as Name, xdm.host.hostname as Hostname, xdm.kubernetes.namespace.name as Namespace, xdm.asset.strong_id as ResourceID, xdm.asset.id as AssetID, xdm.asset.type.name as Type, xdm.asset.provider as Cloud, xdm.asset.realm as Cloud_Account, xdm.asset.cloud.region as Cloud_Region, xdm.image.labels as Labels, xdm.image.os as OS, xdm.image.os_distribution as Distribution, xdm.image.os_family as OS_Family, xdm.image.os_release as OS_Release, xdm.asset.last_observed as Last_Observed, Group_ID, Application, ApplicationCI, Application_Owner, Environment, Function",
+        "time_frame": {
+          "relativeTime": 86400000
+        },
+        "viewOptions": {
+          "type": "table",
+          "commands": []
+        },
+        "gridRawStorageInfo": {
+          "sort": "{\"colId\":\"Name\",\"sort\":\"asc\"}",
+          "coldefs": {},
+          "rowHeight": "{\"rowHeight\":\"stretch\",\"gridRowsHeight\":\"high-row\"}",
+          "columnWidth": "\"stretch\""
+        }
+      },
+      "support_time_range": true,
+      "additional_info": {
+        "query_tables": [
+          "asset_inventory"
+        ],
+        "query_uses_library": false
+      },
+      "creator_mail": ""
+    },
+    {
+      "widget_key": "xql_1762351534313",
+      "title": "Cloud - Container Instance Status",
+      "creation_time": 1762358155662,
+      "description": "Cloud - Container Instance Status",
+      "data": {
+        "params": [
+          {
+            "name": "FilteredProtected",
+            "value": "*"
+          },
+          {
+            "name": "FilteredGroup_ID",
+            "value": "*"
+          },
+          {
+            "name": "FilteredApplication",
+            "value": "*"
+          },
+          {
+            "name": "FilteredApplication_Owner",
+            "value": "*"
+          },
+          {
+            "name": "FilteredEnvironment",
+            "value": "*"
+          },
+          {
+            "name": "FilteredRealm",
+            "value": "*"
+          },
+          {
+            "name": "FilteredProvider",
+            "value": "*"
+          }
+        ],
+        "phrase": "dataset = asset_inventory\n| filter xdm.asset.type.name in (\"Container Instance\")\n| alter Scan_Status  = xdm.asset.raw_fields -> CWP[\"analysis-info_agentless_vulnerability_analyzer\"].scan_analysis_result\n| alter Protected = if (Scan_Status = \"success\", \"Agentless Scan\", Scan_Status = null , \"Not Scanned/Protected\") \n| alter Group_ID = coalesce(xdm.asset.tags -> [\"Group_ID\"], \"None\")\n| alter Application = coalesce(xdm.asset.tags -> [\"Application\"], \"None\")\n| alter ApplicationCI = coalesce(xdm.asset.tags -> [\"ApplicationCI\"], \"None\")\n| alter Application_Owner = coalesce(xdm.asset.tags -> [\"Application_Owner\"], \"None\")\n| alter Environment = coalesce(xdm.asset.tags -> [\"Environment\"], \"None\")\n| alter Environment= uppercase(Environment)\n| alter Function = coalesce(xdm.asset.tags -> [\"Function\"], \"None\")\n| filter Protected in ($FilteredProtected)\n\n| filter Group_ID in ($FilteredGroup_ID)\n| filter Application in ($FilteredApplication)\n| filter Application_Owner in ($FilteredApplication_Owner)\n| filter Environment in ($FilteredEnvironment)\n| filter xdm.asset.realm in ($FilteredRealm)\n| filter xdm.asset.provider in ($FilteredProvider)\n\n| fields Protected, xdm.asset.name as Name, xdm.host.hostname as Hostname, xdm.asset.strong_id as ResourceID,  xdm.asset.id as AssetID, xdm.asset.type.name as Type, xdm.asset.provider as Cloud, xdm.asset.realm as Cloud_Account, xdm.asset.cloud.region as Cloud_Region, xdm.image.labels as Labels, xdm.image.os as OS, xdm.image.os_distribution as Distribution, xdm.image.os_family as OS_Family, xdm.image.os_release as OS_Release, xdm.kubernetes.namespace.name as Namespace, xdm.asset.last_observed as Last_Observed, Group_ID, Application, ApplicationCI, Application_Owner, Environment, Function\n\n| comp count (AssetID ) as Containers by protected\n| sort desc Protected    \n\n\n| view graph type = pie xaxis = protected yaxis = Containers valuecolor(\"Agentless Scan\",\"#5400ff\") ",
+        "time_frame": {
+          "relativeTime": 86400000
+        },
+        "viewOptions": {
+          "type": "pie",
+          "commands": [
+            {
+              "command": {
+                "op": "=",
+                "name": "xaxis",
+                "value": "protected"
+              }
+            },
+            {
+              "command": {
+                "op": "=",
+                "name": "yaxis",
+                "value": "Containers"
+              }
+            },
+            {
+              "func": {
+                "args": [
+                  "Agentless Scan",
+                  "#5400ff"
+                ],
+                "name": "valuecolor"
+              }
+            }
+          ]
+        },
+        "gridRawStorageInfo": {
+          "sort": "{\"colId\":\"Protected\",\"sort\":\"desc\"}",
+          "coldefs": {},
+          "rowHeight": "{\"rowHeight\":\"stretch\",\"gridRowsHeight\":\"high-row\"}",
+          "columnWidth": "\"stretch\""
+        }
+      },
+      "support_time_range": true,
+      "additional_info": {
+        "query_tables": [
+          "asset_inventory"
+        ],
+        "query_uses_library": false
+      },
+      "creator_mail": ""
+    }
+  ],
+  "id": "",
+  "name": "CNAPP - Runtime Workload Protection/Scan Status"
+}
