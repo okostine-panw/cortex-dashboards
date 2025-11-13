@@ -877,7 +877,7 @@
       "widget_key": "xql_1761675780713",
       "title": "Cloud - VM Images Scan Status",
       "creation_time": 1762357899227,
-      "description": "",
+      "description": "Cloud - VM Images Scan Status",
       "data": {
         "params": [
           {
@@ -979,7 +979,7 @@
       "widget_key": "xql_1761676865710",
       "title": "Cloud - VM Images Scan Status - List",
       "creation_time": 1762357900241,
-      "description": "",
+      "description": "Cloud - VM Images Scan Status - List",
       "data": {
         "params": [
           {
@@ -1039,7 +1039,7 @@
       "widget_key": "xql_1761784771762",
       "title": "Cloud - Registry Images Scan Status",
       "creation_time": 1762357902378,
-      "description": "",
+      "description": "Cloud - Registry Images Scan Status",
       "data": {
         "params": [
           {
@@ -1126,7 +1126,7 @@
       "widget_key": "xql_1762278606466",
       "title": "Cloud - Container Registry Status - List",
       "creation_time": 1762357904303,
-      "description": "",
+      "description": "Cloud - Container Registry Status - List",
       "data": {
         "params": [
           {
@@ -1186,7 +1186,7 @@
       "widget_key": "xql_1762282514751",
       "title": "Cloud - Container Image Repository Status - List",
       "creation_time": 1762357907766,
-      "description": "",
+      "description": "Cloud - Container Image Repository Status - List",
       "data": {
         "params": [
           {
@@ -1246,7 +1246,7 @@
       "widget_key": "xql_1762282748068",
       "title": "Cloud - Container Image Repository Status",
       "creation_time": 1762357909114,
-      "description": "",
+      "description": "Cloud - Container Image Repository Status",
       "data": {
         "params": [
           {
@@ -1339,7 +1339,7 @@
       "widget_key": "xql_1762284914912",
       "title": "Cloud - Container Image Status",
       "creation_time": 1762357911091,
-      "description": "",
+      "description": "Cloud - Container Image Status",
       "data": {
         "params": [
           {
@@ -1423,7 +1423,7 @@
       "widget_key": "xql_1762300800981",
       "title": "Cloud - Registry Image Status - List",
       "creation_time": 1762357912350,
-      "description": "",
+      "description": "Cloud - Registry Image Status - List",
       "data": {
         "params": [
           {
@@ -1483,7 +1483,7 @@
       "widget_key": "xql_1762343679812",
       "title": "Cloud - Container Registry Status",
       "creation_time": 1762357913190,
-      "description": "",
+      "description": "Cloud - Container Registry Status",
       "data": {
         "params": [
           {

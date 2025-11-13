@@ -933,7 +933,7 @@
       "widget_key": "xql_1761222512993",
       "title": "Cloud - VMs Scan/Protection Status List",
       "creation_time": 1762358151600,
-      "description": "",
+      "description": "Cloud - VMs Scan/Protection Status List",
       "data": {
         "params": [
           {
@@ -993,7 +993,7 @@
       "widget_key": "xql_1761586630914",
       "title": "Cloud - K8S Clusters Scan/Protection Status - List",
       "creation_time": 1762358152359,
-      "description": "",
+      "description": "Cloud - K8S Clusters Scan/Protection Status - List",
       "data": {
         "params": [
           {
@@ -1053,7 +1053,7 @@
       "widget_key": "xql_1761588554049",
       "title": "Cloud - K8S Clusters Scan/Protection Status",
       "creation_time": 1762358152884,
-      "description": "",
+      "description": "Cloud - K8S Clusters Scan/Protection Status",
       "data": {
         "params": [
           {
@@ -1137,7 +1137,7 @@
       "widget_key": "xql_1761648815793",
       "title": "Cloud - Functions Scan/Protection Status",
       "creation_time": 1762358153263,
-      "description": "",
+      "description": "Cloud - Functions Scan/Protection Status",
       "data": {
         "params": [
           {
@@ -1230,7 +1230,7 @@
       "widget_key": "xql_1761648882968",
       "title": "Cloud - Functions Scan/Protection Status - List",
       "creation_time": 1762358153972,
-      "description": "",
+      "description": "Cloud - Functions Scan/Protection Status - List",
       "data": {
         "params": [
           {
@@ -1290,7 +1290,7 @@
       "widget_key": "xql_1762284581230",
       "title": "Cloud - Container Instance Status - List",
       "creation_time": 1762358154659,
-      "description": "",
+      "description": "Cloud - Container Instance Status - List",
       "data": {
         "params": [
           {
@@ -1350,7 +1350,7 @@
       "widget_key": "xql_1762351534313",
       "title": "Cloud - Container Instance Status",
       "creation_time": 1762358155662,
-      "description": "",
+      "description": "Cloud - Container Instance Status",
       "data": {
         "params": [
           {
