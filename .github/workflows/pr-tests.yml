@@ -12,8 +12,9 @@ jobs:
         GH_TOKEN: ${{ github.token }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
         with:
+            ref: ${{ github.event.pull_request.head.sha }}
             fetch-depth: 0
 
       - name: Check for any changed JSON files
@@ -38,6 +39,8 @@ jobs:
             json_files=$(echo ${{ steps.check-json-files.outputs.json_files }})
 
             for file in $json_files; do
+                if [ ! -f "$file" ]; then continue; fi
+
                 echo "---"
                 echo "Checking file: $file for 'email addresses'"
 
@@ -56,6 +59,8 @@ jobs:
             json_files=$(echo ${{ steps.check-json-files.outputs.json_files }})
 
             for file in $json_files; do
+                if [ ! -f "$file" ]; then continue; fi
+
                 echo "---"
                 echo "Checking file: $file for tenant URL"
 
@@ -74,6 +79,8 @@ jobs:
             json_files=$(echo ${{ steps.check-json-files.outputs.json_files }})
 
             for file in $json_files; do
+                if [ ! -f "$file" ]; then continue; fi
+
                 echo "---"
                 echo "Checking file: $file for 'placeholder.com' URL"
 
@@ -92,6 +99,8 @@ jobs:
             json_files=$(echo ${{ steps.check-json-files.outputs.json_files }})
 
             for file in $json_files; do
+                if [ ! -f "$file" ]; then continue; fi
+                
                 echo "---"
                 echo "Checking file: $file for 'description'"
                 if jq -e '(any(.. | .description?; type == "string" and . == "")) | not' "$file"; then
@@ -107,8 +116,8 @@ jobs:
     needs: [dashboard-tests]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: matheus23/md-spellcheck-action@v4.2.2
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
+      - uses: matheus23/md-spellcheck-action@86eb8632a6975c5324a537f6ffb9b881211e4cee # v4.2.2
         with:
           files-to-check: "**.md"
           words-to-ignore-file: "config/spellcheck-ignore.txt"
