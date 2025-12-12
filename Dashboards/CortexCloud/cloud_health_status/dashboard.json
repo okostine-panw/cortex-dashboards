@@ -1,0 +1,1650 @@
+{
+  "dashboards_data": [
+    {
+      "name": "CNAPP -  Cloud Health Ingestion/Scan Status",
+      "description": "Highlights the most frequent Cloud Health auditing errors across providers, assets, regions, and error messages. Results join cloud_health_auditing with asset_inventory and support filtering by provider, realm, asset name, classification.",
+      "status": "ENABLED",
+      "layout": [
+        {
+          "id": "row-7001",
+          "data": [
+            {
+              "key": "xql_1763667191005",
+              "data": {
+                "type": "Custom XQL",
+                "width": 33.333333333333336,
+                "height": 666,
+                "params": [
+                  {
+                    "name": "errors_only",
+                    "value": "yes"
+                  },
+                  {
+                    "name": "capability",
+                    "value": "*"
+                  },
+                  {
+                    "name": "provider",
+                    "value": "*"
+                  },
+                  {
+                    "name": "realm",
+                    "value": "*"
+                  },
+                  {
+                    "name": "asset_name",
+                    "value": "*"
+                  },
+                  {
+                    "name": "region",
+                    "value": "*"
+                  }
+                ],
+                "phrase": "dataset = cloud_health_auditing\n// | filter classification not in (\"Informational\", \"Success\", \"Scanned\")\n| filter ($errors_only = \"no\") or error = \"*\"\n| filter capability in ($capability)\n| filter region IN ($region)\n| fields _time, account, capability, classification, error, message, region, connector, connector_id, resource_id\n\n| join (\n    dataset = asset_inventory\n\n    // -- Parameter filter wiring --\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.name IN ($asset_name)\n    | filter xdm.asset.cloud.region IN ($region)\n    // -- End parameter filters --\n\n    | fields xdm.asset.name, xdm.asset.provider, xdm.asset.realm, xdm.asset.strong_id, xdm.asset.id, xdm.asset.type.name, xdm.asset.type.category, xdm.asset.cloud.region\n) as asset asset.xdm.asset.name = account\n| alter summary_message = coalesce(message, \"No message provided\")\n| comp\n    count() as TOTAL\nby\n    classification\n| sort desc TOTAL\n| limit 10\n| fields classification, TOTAL\n\n\n\n| view graph type = pie subtype = full xaxis = classification yaxis = TOTAL ",
+                "time_frame": {
+                  "relativeTime": 86400000
+                },
+                "viewOptions": {
+                  "type": "pie",
+                  "commands": [
+                    {
+                      "command": {
+                        "op": "=",
+                        "name": "subtype",
+                        "value": "full"
+                      }
+                    },
+                    {
+                      "command": {
+                        "op": "=",
+                        "name": "xaxis",
+                        "value": "classification"
+                      }
+                    },
+                    {
+                      "command": {
+                        "op": "=",
+                        "name": "yaxis",
+                        "value": "TOTAL"
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "key": "xql_1763652335154",
+              "data": {
+                "type": "Custom XQL",
+                "width": 33.333333333333336,
+                "height": 666,
+                "params": [
+                  {
+                    "name": "errors_only",
+                    "value": "yes"
+                  },
+                  {
+                    "name": "capability",
+                    "value": "*"
+                  },
+                  {
+                    "name": "provider",
+                    "value": "*"
+                  },
+                  {
+                    "name": "realm",
+                    "value": "*"
+                  },
+                  {
+                    "name": "asset_name",
+                    "value": "*"
+                  },
+                  {
+                    "name": "region",
+                    "value": "*"
+                  }
+                ],
+                "phrase": "dataset = cloud_health_auditing\n| filter classification not in (\"Informational\", \"Success\", \"Scanned\")\n| filter ($errors_only = \"no\") or error = \"*\"\n| filter capability in ($capability)\n| filter region IN ($region)\n| fields _time, account, capability, classification, error, message, region, connector, connector_id, resource_id\n| join (\n    dataset = asset_inventory\n\n    // -- Parameter filter wiring --\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.name IN ($asset_name)\n    | filter xdm.asset.cloud.region IN ($region)\n    // -- End parameter filters --\n\n    | fields xdm.asset.name, xdm.asset.provider, xdm.asset.realm, xdm.asset.strong_id, xdm.asset.id, xdm.asset.type.name, xdm.asset.type.category, xdm.asset.cloud.region\n) as asset asset.xdm.asset.name = account\n| alter asset_name = xdm.asset.name\n| comp\n    count() as TOTAL\nby\n    capability\n| sort desc TOTAL\n| fields  TOTAL, capability\n\n\n\n// | view graph type = pie subtype = full xaxis = capability yaxis = TOTAL ",
+                "entityType": "xql-widget-table-58f43d07-a15e-419e-bbd7-b7df901306a1",
+                "time_frame": {
+                  "relativeTime": 86400000
+                },
+                "viewOptions": {
+                  "type": "table",
+                  "commands": []
+                },
+                "drilldown_config": {
+                  "actionData": [
+                    {
+                      "param": "capability",
+                      "value": "$row.capability"
+                    }
+                  ],
+                  "actionType": "in_dashboard_drilldown"
+                },
+                "gridRawStorageInfo": {
+                  "sort": null,
+                  "coldefs": {},
+                  "rowHeight": "{\"rowHeight\":\"regular\",\"gridRowsHeight\":\"medium-row\"}",
+                  "columnWidth": "\"stretch\""
+                }
+              }
+            },
+            {
+              "key": "xql_classification_by_capability_1763677992",
+              "data": {
+                "type": "Custom XQL",
+                "width": 33.333333333333336,
+                "height": 666,
+                "params": [
+                  {
+                    "name": "errors_only",
+                    "value": "yes"
+                  },
+                  {
+                    "name": "capability",
+                    "value": "*"
+                  },
+                  {
+                    "name": "provider",
+                    "value": "*"
+                  },
+                  {
+                    "name": "realm",
+                    "value": "*"
+                  },
+                  {
+                    "name": "asset_name",
+                    "value": "*"
+                  },
+                  {
+                    "name": "region",
+                    "value": "*"
+                  }
+                ],
+                "phrase": "dataset = cloud_health_auditing\n| filter classification not in (\"Informational\", \"Success\", \"Scanned\")\n| filter ($errors_only = \"no\") or error = \"*\"\n| filter capability in ($capability)\n| filter region IN ($region)\n| fields _time, account, capability, classification, error, message, region, connector, connector_id, resource_id\n\n| join (\n    dataset = asset_inventory\n\n    // -- Parameter filter wiring --\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.name IN ($asset_name)\n    | filter xdm.asset.cloud.region IN ($region)\n    // -- End parameter filters --\n\n    | fields xdm.asset.name, xdm.asset.provider, xdm.asset.realm, xdm.asset.strong_id, xdm.asset.id, xdm.asset.type.name, xdm.asset.type.category, xdm.asset.cloud.region\n) as asset asset.xdm.asset.name = account\n| comp\n    count() as TOTAL\nby\n    classification,\n    capability\n| sort desc TOTAL\n| fields TOTAL, classification, capability\n",
+                "entityType": "xql-widget-table-99e3588e-0f8d-484c-bd60-628a108a5d37",
+                "time_frame": {
+                  "relativeTime": 86400000
+                },
+                "viewOptions": {
+                  "type": "table",
+                  "commands": []
+                },
+                "drilldown_config": {
+                  "actionData": [
+                    {
+                      "param": "capability",
+                      "value": "$row.capability"
+                    }
+                  ],
+                  "actionType": "in_dashboard_drilldown"
+                },
+                "gridRawStorageInfo": {
+                  "sort": null,
+                  "coldefs": {},
+                  "rowHeight": "{\"rowHeight\":\"large\",\"gridRowsHeight\":\"large-row\"}",
+                  "columnWidth": "\"stretch\""
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "row-886",
+          "data": [
+            {
+              "key": "xql_top_errors_provider",
+              "data": {
+                "type": "Custom XQL",
+                "width": 33.333333333333336,
+                "height": 518,
+                "params": [
+                  {
+                    "name": "errors_only",
+                    "value": "yes"
+                  },
+                  {
+                    "name": "capability",
+                    "value": "*"
+                  },
+                  {
+                    "name": "provider",
+                    "value": "*"
+                  },
+                  {
+                    "name": "realm",
+                    "value": "*"
+                  },
+                  {
+                    "name": "asset_name",
+                    "value": "*"
+                  },
+                  {
+                    "name": "region",
+                    "value": "*"
+                  }
+                ],
+                "phrase": "dataset = cloud_health_auditing\n| filter classification not in (\"Informational\", \"Success\", \"Scanned\")\n| filter ($errors_only = \"no\") or error = \"*\"\n| filter capability in ($capability)\n| filter region IN ($region)\n| fields _time, account, capability, classification, error, message, region, connector, connector_id, resource_id\n\n| join (\n    dataset = asset_inventory\n\n    // -- Parameter filter wiring --\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.name IN ($asset_name)\n    | filter xdm.asset.cloud.region IN ($region)\n    // -- End parameter filters --\n\n    | fields xdm.asset.name, xdm.asset.provider, xdm.asset.realm, xdm.asset.strong_id, xdm.asset.id, xdm.asset.type.name, xdm.asset.type.category, xdm.asset.cloud.region\n) as asset asset.xdm.asset.name = account\n| alter asset_name = xdm.asset.name\n| comp\n    count() as TOTAL\nby\n    xdm.asset.provider\n| sort desc TOTAL\n| fields xdm.asset.provider, TOTAL\n\n\n| view graph type = pie subtype = full xaxis = xdm.asset.provider yaxis = TOTAL ",
+                "time_frame": {
+                  "relativeTime": 86400000
+                },
+                "viewOptions": {
+                  "type": "pie",
+                  "commands": [
+                    {
+                      "command": {
+                        "op": "=",
+                        "name": "subtype",
+                        "value": "full"
+                      }
+                    },
+                    {
+                      "command": {
+                        "op": "=",
+                        "name": "xaxis",
+                        "value": "xdm.asset.provider"
+                      }
+                    },
+                    {
+                      "command": {
+                        "op": "=",
+                        "name": "yaxis",
+                        "value": "TOTAL"
+                      }
+                    }
+                  ]
+                },
+                "drilldown_config": {
+                  "actionData": [
+                    {
+                      "param": "provider",
+                      "value": "$x_axis.value"
+                    }
+                  ],
+                  "actionType": "in_dashboard_drilldown"
+                }
+              }
+            },
+            {
+              "key": "xql_top_errors_asset",
+              "data": {
+                "type": "Custom XQL",
+                "width": 33.333333333333336,
+                "height": 518,
+                "params": [
+                  {
+                    "name": "errors_only",
+                    "value": "yes"
+                  },
+                  {
+                    "name": "capability",
+                    "value": "*"
+                  },
+                  {
+                    "name": "provider",
+                    "value": "*"
+                  },
+                  {
+                    "name": "realm",
+                    "value": "*"
+                  },
+                  {
+                    "name": "asset_name",
+                    "value": "*"
+                  },
+                  {
+                    "name": "region",
+                    "value": "*"
+                  }
+                ],
+                "phrase": "dataset = cloud_health_auditing\n| filter classification not in (\"Informational\", \"Success\", \"Scanned\")\n| filter ($errors_only = \"no\") or error = \"*\"\n| filter capability in ($capability)\n| filter region IN ($region)\n| fields _time, account, capability, classification, error, message, region, connector, connector_id, resource_id\n\n| join (\n    dataset = asset_inventory\n\n    // -- Parameter filter wiring --\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.name IN ($asset_name)\n    | filter xdm.asset.cloud.region IN ($region)\n    // -- End parameter filters --\n\n    | fields xdm.asset.name, xdm.asset.provider, xdm.asset.realm, xdm.asset.strong_id, xdm.asset.id, xdm.asset.type.name, xdm.asset.type.category, xdm.asset.cloud.region\n) as asset asset.xdm.asset.name = account\n| alter asset_name = if(xdm.asset.name ~= \"^[0-9]+$\", concat(\"\\\"\", to_string(xdm.asset.name), \"\\\"\"), to_string(xdm.asset.name))\n| comp\n    count() as TOTAL\nby\n    asset_name\n| sort desc TOTAL\n| fields asset_name, TOTAL\n\n\n\n| view graph type = pie subtype = full xaxis = asset_name yaxis = TOTAL ",
+                "time_frame": {
+                  "relativeTime": 86400000
+                },
+                "viewOptions": {
+                  "type": "pie",
+                  "commands": [
+                    {
+                      "command": {
+                        "op": "=",
+                        "name": "subtype",
+                        "value": "full"
+                      }
+                    },
+                    {
+                      "command": {
+                        "op": "=",
+                        "name": "xaxis",
+                        "value": "asset_name"
+                      }
+                    },
+                    {
+                      "command": {
+                        "op": "=",
+                        "name": "yaxis",
+                        "value": "TOTAL"
+                      }
+                    }
+                  ]
+                },
+                "drilldown_config": {
+                  "actionData": [
+                    {
+                      "param": "realm",
+                      "value": "$x_axis.value"
+                    }
+                  ],
+                  "actionType": "in_dashboard_drilldown"
+                }
+              }
+            },
+            {
+              "key": "xql_top_errors_region",
+              "data": {
+                "type": "Custom XQL",
+                "width": 33.333333333333336,
+                "height": 518,
+                "params": [
+                  {
+                    "name": "errors_only",
+                    "value": "yes"
+                  },
+                  {
+                    "name": "capability",
+                    "value": "*"
+                  },
+                  {
+                    "name": "provider",
+                    "value": "*"
+                  },
+                  {
+                    "name": "realm",
+                    "value": "*"
+                  },
+                  {
+                    "name": "asset_name",
+                    "value": "*"
+                  },
+                  {
+                    "name": "region",
+                    "value": "*"
+                  }
+                ],
+                "phrase": "dataset = cloud_health_auditing\n| filter classification not in (\"Informational\", \"Success\", \"Scanned\")\n| filter ($errors_only = \"no\") or error = \"*\"\n| filter capability in ($capability)\n| filter region IN ($region)\n| fields _time, account, capability, classification, error, message, region, connector, connector_id, resource_id\n\n| join (\n    dataset = asset_inventory\n\n    // -- Parameter filter wiring --\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.name IN ($asset_name)\n    | filter xdm.asset.cloud.region IN ($region)\n    // -- End parameter filters --\n\n    | fields xdm.asset.name, xdm.asset.provider, xdm.asset.realm, xdm.asset.strong_id, xdm.asset.id, xdm.asset.type.name, xdm.asset.type.category, xdm.asset.cloud.region\n) as asset asset.xdm.asset.name = account\n| alter event_region = coalesce(region, \"Unknown\")\n| comp\n    count() as TOTAL\nby\n    event_region\n| sort desc TOTAL\n| fields event_region, TOTAL\n\n\n| view graph type = pie subtype = full xaxis = event_region yaxis = TOTAL ",
+                "time_frame": {
+                  "relativeTime": 86400000
+                },
+                "viewOptions": {
+                  "type": "pie",
+                  "commands": [
+                    {
+                      "command": {
+                        "op": "=",
+                        "name": "subtype",
+                        "value": "full"
+                      }
+                    },
+                    {
+                      "command": {
+                        "op": "=",
+                        "name": "xaxis",
+                        "value": "event_region"
+                      }
+                    },
+                    {
+                      "command": {
+                        "op": "=",
+                        "name": "yaxis",
+                        "value": "TOTAL"
+                      }
+                    }
+                  ]
+                },
+                "drilldown_config": {
+                  "actionData": [
+                    {
+                      "param": "region",
+                      "value": "$x_axis.value"
+                    }
+                  ],
+                  "actionType": "in_dashboard_drilldown"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "row-1676",
+          "data": [
+            {
+              "key": "xql_top_errors_message",
+              "data": {
+                "type": "Custom XQL",
+                "width": 50,
+                "height": 518,
+                "params": [
+                  {
+                    "name": "errors_only",
+                    "value": "yes"
+                  },
+                  {
+                    "name": "capability",
+                    "value": "*"
+                  },
+                  {
+                    "name": "provider",
+                    "value": "*"
+                  },
+                  {
+                    "name": "realm",
+                    "value": "*"
+                  },
+                  {
+                    "name": "asset_name",
+                    "value": "*"
+                  },
+                  {
+                    "name": "region",
+                    "value": "*"
+                  }
+                ],
+                "phrase": "dataset = cloud_health_auditing\n| filter classification not in (\"Informational\", \"Success\", \"Scanned\")\n| filter ($errors_only = \"no\") or error = \"*\"\n| filter capability in ($capability)\n| filter region IN ($region)\n| fields _time, account, capability, classification, error, message, region, connector, connector_id, resource_id\n\n| join (\n    dataset = asset_inventory\n\n    // -- Parameter filter wiring --\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.name IN ($asset_name)\n    | filter xdm.asset.cloud.region IN ($region)\n    // -- End parameter filters --\n\n    | fields xdm.asset.name, xdm.asset.provider, xdm.asset.realm, xdm.asset.strong_id, xdm.asset.id, xdm.asset.type.name, xdm.asset.type.category, xdm.asset.cloud.region\n) as asset asset.xdm.asset.name = account\n| alter summary_message = coalesce(message, \"No message provided\")\n| comp\n    count() as TOTAL\nby\n    summary_message\n| sort desc TOTAL\n| limit 15\n| fields TOTAL, summary_message\n",
+                "entityType": "xql-widget-table-2db3e15f-b974-4573-8332-328702c56a9a",
+                "time_frame": {
+                  "relativeTime": 86400000
+                },
+                "viewOptions": {
+                  "type": "table",
+                  "commands": []
+                },
+                "gridRawStorageInfo": {
+                  "sort": null,
+                  "coldefs": {},
+                  "rowHeight": "{\"rowHeight\":\"regular\",\"gridRowsHeight\":\"medium-row\"}",
+                  "columnWidth": "\"stretch\""
+                }
+              }
+            },
+            {
+              "key": "xql_permissions_issues_table",
+              "data": {
+                "type": "Custom XQL",
+                "width": 50,
+                "height": 518,
+                "params": [
+                  {
+                    "name": "provider",
+                    "value": "*"
+                  },
+                  {
+                    "name": "realm",
+                    "value": "*"
+                  },
+                  {
+                    "name": "asset_name",
+                    "value": "*"
+                  },
+                  {
+                    "name": "region",
+                    "value": "*"
+                  }
+                ],
+                "phrase": "\ndataset = cloud_health_auditing\n| filter classification not in (\"Informational\", \"Success\", \"Scanned\")\n| filter error contains \"403\" or error contains \"service control\"\n| join (\n    dataset = asset_inventory\n    // -- Parameter filter wiring --\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.name IN ($asset_name)\n    | filter xdm.asset.cloud.region IN ($region)\n    // -- End parameter filters --\n\n    | fields xdm.asset.name, xdm.asset.provider, xdm.asset.realm, xdm.asset.strong_id, xdm.asset.id, xdm.asset.type.name, xdm.asset.type.category, xdm.asset.cloud.region\n) as asset asset.xdm.asset.name = account\n| alter asset_name = xdm.asset.name\n| comp\n    count() as TOTAL\nby\n    xdm.asset.provider,\n    asset_name,\n    error\n| sort desc TOTAL\n| fields TOTAL, xdm.asset.provider, asset_name, error\n",
+                "entityType": "xql-widget-table-e037ea20-0124-4cd8-ae6c-828656f45846",
+                "time_frame": {
+                  "relativeTime": 86400000
+                },
+                "viewOptions": {
+                  "type": "table",
+                  "commands": []
+                },
+                "drilldown_config": {
+                  "actionData": [
+                    {
+                      "param": "realm",
+                      "value": "$row.asset_name"
+                    }
+                  ],
+                  "actionType": "in_dashboard_drilldown"
+                },
+                "gridRawStorageInfo": {
+                  "sort": null,
+                  "coldefs": {
+                    "error": "{\"pinned\":null,\"width\":null,\"hide\":false}",
+                    "asset_name": "{\"pinned\":null,\"width\":null,\"hide\":false}"
+                  },
+                  "rowHeight": "{\"rowHeight\":\"thin\",\"gridRowsHeight\":\"small-row\"}",
+                  "columnWidth": "\"stretch\""
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "row-3283",
+          "data": [
+            {
+              "key": "xql_1763668610549",
+              "data": {
+                "type": "Custom XQL",
+                "width": 100,
+                "height": 400,
+                "params": [
+                  {
+                    "name": "capability",
+                    "value": "*"
+                  },
+                  {
+                    "name": "provider",
+                    "value": "*"
+                  },
+                  {
+                    "name": "realm",
+                    "value": "*"
+                  },
+                  {
+                    "name": "asset_name",
+                    "value": "*"
+                  },
+                  {
+                    "name": "region",
+                    "value": "*"
+                  }
+                ],
+                "phrase": "\ndataset = cloud_health_auditing\n| filter classification in (\"Error\", \"Failed\")\n| filter capability IN ($capability)\n| filter region IN ($region)\n| fields _time, account, capability, classification, error, message, region, connector, connector_id, resource_id\n\n// | filter error contains \"403\" or error contains \"service control\"\n| join (\n    dataset = asset_inventory\n    // -- Parameter filter wiring --\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.name IN ($asset_name)\n    | filter xdm.asset.cloud.region IN ($region)\n    // -- End parameter filters --\n\n    | fields xdm.asset.name, xdm.asset.provider, xdm.asset.realm, xdm.asset.strong_id, xdm.asset.id, xdm.asset.type.name, xdm.asset.type.category, xdm.asset.cloud.region\n) as asset asset.xdm.asset.name = account\n| alter asset_name = xdm.asset.name\n| comp\n    count() as TOTAL\nby\n    xdm.asset.provider,\n    asset_name,\n    message,\n    classification,\n    capability\n| sort desc TOTAL\n| fields TOTAL, xdm.asset.provider, asset_name, message, classification, capability\n",
+                "entityType": "xql-widget-table-0a499633-e944-4454-9a9c-0fa3f6ec5983",
+                "time_frame": {
+                  "relativeTime": 86400000
+                },
+                "viewOptions": {
+                  "type": "table",
+                  "commands": []
+                },
+                "drilldown_config": {
+                  "actionData": [
+                    {
+                      "param": "realm",
+                      "value": "$row.asset_name"
+                    }
+                  ],
+                  "actionType": "in_dashboard_drilldown"
+                },
+                "gridRawStorageInfo": {
+                  "sort": null,
+                  "coldefs": {},
+                  "rowHeight": "{\"rowHeight\":\"thin\",\"gridRowsHeight\":\"small-row\"}",
+                  "columnWidth": "\"stretch\""
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "row-7002",
+          "data": [
+            {
+              "key": "xql_top_errors_table",
+              "data": {
+                "type": "Custom XQL",
+                "width": 100,
+                "height": 403.5,
+                "params": [
+                  {
+                    "name": "errors_only",
+                    "value": "yes"
+                  },
+                  {
+                    "name": "capability",
+                    "value": "*"
+                  },
+                  {
+                    "name": "provider",
+                    "value": "*"
+                  },
+                  {
+                    "name": "realm",
+                    "value": "*"
+                  },
+                  {
+                    "name": "asset_name",
+                    "value": "*"
+                  },
+                  {
+                    "name": "region",
+                    "value": "*"
+                  }
+                ],
+                "phrase": "\ndataset = cloud_health_auditing\n| filter classification not in (\"Informational\", \"Success\", \"Scanned\")\n| filter ($errors_only = \"no\") or error = \"*\"\n| filter Capability in ($capability)\n| filter region IN ($region)\n| fields _time, account, Capability, classification, error, message, region, connector, connector_id, resource_id\n| join (\n    dataset = asset_inventory\n    // -- Parameter filter wiring --\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.name IN ($asset_name)\n    | filter xdm.asset.cloud.region IN ($region)\n    // -- End parameter filters --\n\n    | fields xdm.asset.name, xdm.asset.provider, xdm.asset.realm, xdm.asset.strong_id, xdm.asset.id, xdm.asset.type.name, xdm.asset.type.category, xdm.asset.cloud.region\n) as asset asset.xdm.asset.name = account\n| alter asset_name = xdm.asset.name\n| alter summary_message = coalesce(message, \"No message provided\")\n| fields\n    _time,\n    capability,\n    classification,\n    error,\n    connector,\n    connector_id,\n    region,\n    asset_name,\n    xdm.asset.provider,\n    xdm.asset.realm,\n    xdm.asset.strong_id,\n    summary_message,\n    resource_id\n| sort desc _time\n",
+                "entityType": "xql-widget-table-987af5a6-a1e9-4321-985a-27ed87d3ef39",
+                "time_frame": {
+                  "relativeTime": 86400000
+                },
+                "viewOptions": {
+                  "type": "table",
+                  "commands": []
+                },
+                "drilldown_config": {
+                  "actionData": {
+                    "url": "https://placeholder.com/assets/inventory?id=$row.resource_id&assetId=$row.resource_id",
+                    "openInNewTab": true
+                  },
+                  "actionType": "open_custom_url"
+                },
+                "gridRawStorageInfo": {
+                  "sort": null,
+                  "coldefs": {},
+                  "rowHeight": "{\"rowHeight\":\"thin\",\"gridRowsHeight\":\"small-row\"}",
+                  "columnWidth": "\"stretch\""
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "row-8037",
+          "data": [
+            {
+              "key": "xql_1763668718620",
+              "data": {
+                "type": "Custom XQL",
+                "width": 50,
+                "height": 403.5,
+                "params": [
+                  {
+                    "name": "capability",
+                    "value": "*"
+                  },
+                  {
+                    "name": "provider",
+                    "value": "*"
+                  },
+                  {
+                    "name": "realm",
+                    "value": "*"
+                  },
+                  {
+                    "name": "asset_name",
+                    "value": "*"
+                  },
+                  {
+                    "name": "region",
+                    "value": "*"
+                  }
+                ],
+                "phrase": "\ndataset = cloud_health_auditing\n| filter classification in (\"Warning\")\n| filter capability IN ($capability)\n| filter region IN ($region)\n| fields _time, account, capability, classification, error, message, region, connector, connector_id, resource_id\n\n// | filter error contains \"403\" or error contains \"service control\"\n| join (\n    dataset = asset_inventory\n    // -- Parameter filter wiring --\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.name IN ($asset_name)\n    | filter xdm.asset.cloud.region IN ($region)\n    // -- End parameter filters --\n\n    | fields xdm.asset.name, xdm.asset.provider, xdm.asset.realm, xdm.asset.strong_id, xdm.asset.id, xdm.asset.type.name, xdm.asset.type.category, xdm.asset.cloud.region\n) as asset asset.xdm.asset.name = account\n| alter asset_name = xdm.asset.name\n| comp\n    count() as TOTAL\nby\n    xdm.asset.provider,\n    asset_name,\n    message,\n    classification,\n    capability\n| sort desc TOTAL\n| fields TOTAL, xdm.asset.provider, asset_name, message, classification, capability\n",
+                "entityType": "xql-widget-table-be1d3002-95ef-4eae-924d-a56f16df3962",
+                "time_frame": {
+                  "relativeTime": 86400000
+                },
+                "viewOptions": {
+                  "type": "table",
+                  "commands": []
+                },
+                "drilldown_config": {
+                  "actionData": [
+                    {
+                      "param": "realm",
+                      "value": "$row.asset_name"
+                    }
+                  ],
+                  "actionType": "in_dashboard_drilldown"
+                },
+                "gridRawStorageInfo": {
+                  "sort": null,
+                  "coldefs": {},
+                  "rowHeight": "{\"rowHeight\":\"thin\",\"gridRowsHeight\":\"small-row\"}",
+                  "columnWidth": "\"stretch\""
+                }
+              }
+            },
+            {
+              "key": "xql_1763668945837",
+              "data": {
+                "type": "Custom XQL",
+                "width": 50,
+                "height": 403.5,
+                "params": [
+                  {
+                    "name": "capability",
+                    "value": "*"
+                  },
+                  {
+                    "name": "provider",
+                    "value": "*"
+                  },
+                  {
+                    "name": "realm",
+                    "value": "*"
+                  },
+                  {
+                    "name": "asset_name",
+                    "value": "*"
+                  },
+                  {
+                    "name": "region",
+                    "value": "*"
+                  }
+                ],
+                "phrase": "\ndataset = cloud_health_auditing\n| filter classification in (\"Unsupported\")\n| filter capability IN ($capability)\n| filter region IN ($region)\n| fields _time, account, capability, classification, error, message, region, connector, connector_id, resource_id\n\n// | filter error contains \"403\" or error contains \"service control\"\n| join (\n    dataset = asset_inventory\n    // -- Parameter filter wiring --\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.name IN ($asset_name)\n    | filter xdm.asset.cloud.region IN ($region)\n    // -- End parameter filters --\n\n    | fields xdm.asset.name, xdm.asset.provider, xdm.asset.realm, xdm.asset.strong_id, xdm.asset.id, xdm.asset.type.name, xdm.asset.type.category, xdm.asset.cloud.region\n) as asset asset.xdm.asset.name = account\n| alter asset_name = xdm.asset.name\n| comp\n    count() as TOTAL\nby\n    xdm.asset.provider,\n    asset_name,\n    message,\n    capability\n| sort desc TOTAL\n| fields TOTAL, xdm.asset.provider, asset_name, message, capability\n",
+                "entityType": "xql-widget-table-2a1e74b6-2ddf-4f16-8a8e-d868768c298c",
+                "time_frame": {
+                  "relativeTime": 86400000
+                },
+                "viewOptions": {
+                  "type": "table",
+                  "commands": []
+                },
+                "drilldown_config": {
+                  "actionData": [
+                    {
+                      "param": "realm",
+                      "value": "$row.asset_name"
+                    }
+                  ],
+                  "actionType": "in_dashboard_drilldown"
+                },
+                "gridRawStorageInfo": {
+                  "sort": null,
+                  "coldefs": {},
+                  "rowHeight": "{\"rowHeight\":\"thin\",\"gridRowsHeight\":\"small-row\"}",
+                  "columnWidth": "\"stretch\""
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "default_dashboard_id": 1,
+      "global_id": "top_cloud_health_errors",
+      "metadata": {
+        "params": [
+          {
+            "name": "provider",
+            "type": "DYNAMIC",
+            "title": "Provider",
+            "value": [],
+            "executionID": "ce482267b2f24d_5346116_inv",
+            "valueOptions": [],
+            "investigation": {
+              "ttl": "0",
+              "timeframe": {
+                "relativeTime": 86400000
+              },
+              "input_dict": {
+                "xql": "\ndataset = cloud_health_auditing\n| join (\n    dataset = asset_inventory\n    | fields xdm.asset.name, xdm.asset.provider\n) as asset asset.xdm.asset.name = account\n| fields xdm.asset.provider as provider\n| dedup provider\n| fields provider\n",
+                "tenants": [],
+                "schedule": null,
+                "query_editor": "xql",
+                "notification_link": "xql/xql-search/_EXECUTION_ID_",
+                "run_in_background": false,
+                "query_definition_name": "XQL-QUERY-6000001"
+              },
+              "query_source_metadata": {
+                "source": "investigation"
+              }
+            },
+            "investigationError": null,
+            "filterComponentType": "MULTI_SELECT",
+            "investigationColumn": "provider"
+          },
+          {
+            "name": "realm",
+            "type": "DYNAMIC",
+            "title": "Cloud Account",
+            "value": [],
+            "executionID": "fc78ee5af3e24f_5346117_inv",
+            "valueOptions": [],
+            "investigation": {
+              "ttl": "0",
+              "timeframe": {
+                "relativeTime": 86400000
+              },
+              "input_dict": {
+                "xql": "\ndataset = cloud_health_auditing\n| join (\n    dataset = asset_inventory\n    | fields xdm.asset.name, xdm.asset.realm\n) as asset asset.xdm.asset.name = account\n| fields xdm.asset.realm as realm\n| dedup realm\n| alter realm = if(realm ~= \"^[0-9]+$\", concat(\"\\\"\", to_string(realm), \"\\\"\"), to_string(realm))\n| fields realm\n",
+                "tenants": [],
+                "schedule": null,
+                "query_editor": "xql",
+                "notification_link": "xql/xql-search/_EXECUTION_ID_",
+                "run_in_background": false,
+                "query_definition_name": "XQL-QUERY-2324480"
+              },
+              "query_source_metadata": {
+                "source": "investigation"
+              }
+            },
+            "investigationError": null,
+            "filterComponentType": "MULTI_SELECT",
+            "investigationColumn": "realm"
+          },
+          {
+            "name": "region",
+            "type": "DYNAMIC",
+            "title": "Region",
+            "value": [],
+            "executionID": "b9082706eda24a_5346115_inv",
+            "valueOptions": [],
+            "investigation": {
+              "ttl": "0",
+              "timeframe": {
+                "relativeTime": 86400000
+              },
+              "input_dict": {
+                "xql": "\ndataset = cloud_health_auditing\n| fields region\n| dedup region\n| fields region\n",
+                "tenants": [],
+                "schedule": null,
+                "query_editor": "xql",
+                "notification_link": "xql/xql-search/_EXECUTION_ID_",
+                "run_in_background": false,
+                "query_definition_name": "XQL-QUERY-6000005"
+              },
+              "query_source_metadata": {
+                "source": "investigation"
+              }
+            },
+            "investigationError": null,
+            "filterComponentType": "MULTI_SELECT",
+            "investigationColumn": "region"
+          },
+          {
+            "name": "capability",
+            "type": "STATIC",
+            "title": "Capability",
+            "value": "",
+            "valueOptions": [
+              "Automation",
+              "ADS",
+              "Connector",
+              "Discovery",
+              "DSPM",
+              "Identity Security",
+              "Outpost",
+              "Permissions",
+              "Registry",
+              "Serverless"
+            ],
+            "investigation": null,
+            "filterComponentType": "MULTI_SELECT"
+          },
+          {
+            "name": "errors_only",
+            "type": "STATIC",
+            "title": "Errors Only",
+            "value": "no",
+            "valueOptions": [
+              "yes",
+              "no"
+            ],
+            "investigation": null,
+            "filterComponentType": "SINGLE_SELECT"
+          }
+        ]
+      }
+    }
+  ],
+  "widgets_data": [
+    {
+      "widget_key": "xql_1763668718620",
+      "title": "Top Warning Issues",
+      "creation_time": 1763714770384,
+      "description": "Aggregated view of assets with warnings.",
+      "data": {
+        "params": [
+          {
+            "name": "capability",
+            "value": "*"
+          },
+          {
+            "name": "provider",
+            "value": "*"
+          },
+          {
+            "name": "realm",
+            "value": "*"
+          },
+          {
+            "name": "asset_name",
+            "value": "*"
+          },
+          {
+            "name": "region",
+            "value": "*"
+          }
+        ],
+        "phrase": "\ndataset = cloud_health_auditing\n| filter classification in (\"Warning\")\n| filter capability IN ($capability)\n| filter region IN ($region)\n| fields _time, account, capability, classification, error, message, region, connector, connector_id, resource_id\n\n// | filter error contains \"403\" or error contains \"service control\"\n| join (\n    dataset = asset_inventory\n    // -- Parameter filter wiring --\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.name IN ($asset_name)\n    | filter xdm.asset.cloud.region IN ($region)\n    // -- End parameter filters --\n\n    | fields xdm.asset.name, xdm.asset.provider, xdm.asset.realm, xdm.asset.strong_id, xdm.asset.id, xdm.asset.type.name, xdm.asset.type.category, xdm.asset.cloud.region\n) as asset asset.xdm.asset.name = account\n| alter asset_name = xdm.asset.name\n| comp\n    count() as TOTAL\nby\n    xdm.asset.provider,\n    asset_name,\n    message,\n    classification,\n    capability\n| sort desc TOTAL\n| fields TOTAL, xdm.asset.provider, asset_name, message, classification, capability\n",
+        "time_frame": {
+          "relativeTime": 86400000
+        },
+        "viewOptions": {
+          "type": "table",
+          "commands": []
+        },
+        "drilldown_config": {
+          "actionData": [
+            {
+              "param": "provider",
+              "value": "$row.xdm.asset.provider"
+            }
+          ],
+          "actionType": "in_dashboard_drilldown"
+        },
+        "gridRawStorageInfo": {
+          "sort": null,
+          "coldefs": {},
+          "rowHeight": "{\"rowHeight\":\"large\",\"gridRowsHeight\":\"large-row\"}",
+          "columnWidth": null
+        }
+      },
+      "support_time_range": true,
+      "additional_info": {
+        "query_tables": [
+          "asset_inventory",
+          "cloud_health_auditing"
+        ],
+        "query_uses_library": false
+      }
+    },
+    {
+      "widget_key": "xql_top_errors_asset",
+      "title": "Errors by Account",
+      "creation_time": 1763714770712,
+      "description": "Errors by Account",
+      "data": {
+        "params": [
+          {
+            "name": "errors_only",
+            "value": "yes"
+          },
+          {
+            "name": "capability",
+            "value": "*"
+          },
+          {
+            "name": "provider",
+            "value": "*"
+          },
+          {
+            "name": "realm",
+            "value": "*"
+          },
+          {
+            "name": "asset_name",
+            "value": "*"
+          },
+          {
+            "name": "region",
+            "value": "*"
+          }
+        ],
+        "phrase": "dataset = cloud_health_auditing\n| filter classification not in (\"Informational\", \"Success\", \"Scanned\")\n| filter ($errors_only = \"no\") or error = \"*\"\n| filter capability in ($capability)\n| filter region IN ($region)\n| fields _time, account, capability, classification, error, message, region, connector, connector_id, resource_id\n\n| join (\n    dataset = asset_inventory\n\n    // -- Parameter filter wiring --\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.name IN ($asset_name)\n    | filter xdm.asset.cloud.region IN ($region)\n    // -- End parameter filters --\n\n    | fields xdm.asset.name, xdm.asset.provider, xdm.asset.realm, xdm.asset.strong_id, xdm.asset.id, xdm.asset.type.name, xdm.asset.type.category, xdm.asset.cloud.region\n) as asset asset.xdm.asset.name = account\n| alter asset_name = if(xdm.asset.name ~= \"^[0-9]+$\", concat(\"\\\"\", to_string(xdm.asset.name), \"\\\"\"), to_string(xdm.asset.name))\n| comp\n    count() as TOTAL\nby\n    asset_name\n| sort desc TOTAL\n| fields asset_name, TOTAL\n\n\n\n| view graph type = pie subtype = full xaxis = asset_name yaxis = TOTAL ",
+        "time_frame": {
+          "relativeTime": 86400000
+        },
+        "viewOptions": {
+          "type": "pie",
+          "commands": [
+            {
+              "command": {
+                "op": "=",
+                "name": "subtype",
+                "value": "full"
+              }
+            },
+            {
+              "command": {
+                "op": "=",
+                "name": "xaxis",
+                "value": "asset_name"
+              }
+            },
+            {
+              "command": {
+                "op": "=",
+                "name": "yaxis",
+                "value": "TOTAL"
+              }
+            }
+          ]
+        }
+      },
+      "support_time_range": true,
+      "additional_info": {
+        "query_tables": [
+          "asset_inventory",
+          "cloud_health_auditing"
+        ],
+        "query_uses_library": false
+      }
+    },
+    {
+      "widget_key": "xql_permissions_issues_table",
+      "title": "Top Permissions Issues",
+      "creation_time": 1763714769638,
+      "description": "Aggregated view of assets with 403 or service control permission errors.",
+      "data": {
+        "params": [
+          {
+            "name": "provider",
+            "value": "*"
+          },
+          {
+            "name": "realm",
+            "value": "*"
+          },
+          {
+            "name": "asset_name",
+            "value": "*"
+          },
+          {
+            "name": "region",
+            "value": "*"
+          }
+        ],
+        "phrase": "\ndataset = cloud_health_auditing\n| filter classification not in (\"Informational\", \"Success\", \"Scanned\")\n| filter error contains \"403\" or error contains \"service control\"\n| join (\n    dataset = asset_inventory\n    // -- Parameter filter wiring --\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.name IN ($asset_name)\n    | filter xdm.asset.cloud.region IN ($region)\n    // -- End parameter filters --\n\n    | fields xdm.asset.name, xdm.asset.provider, xdm.asset.realm, xdm.asset.strong_id, xdm.asset.id, xdm.asset.type.name, xdm.asset.type.category, xdm.asset.cloud.region\n) as asset asset.xdm.asset.name = account\n| alter asset_name = xdm.asset.name\n| comp\n    count() as TOTAL\nby\n    xdm.asset.provider,\n    asset_name,\n    error\n| sort desc TOTAL\n| fields TOTAL, xdm.asset.provider, asset_name, error\n",
+        "time_frame": {
+          "relativeTime": 86400000
+        },
+        "viewOptions": {
+          "type": "table",
+          "commands": []
+        },
+        "drilldown_config": {
+          "actionData": [
+            {
+              "param": "provider",
+              "value": "$row.xdm.asset.provider"
+            }
+          ],
+          "actionType": "in_dashboard_drilldown"
+        },
+        "gridRawStorageInfo": {
+          "sort": null,
+          "coldefs": {},
+          "rowHeight": "{\"rowHeight\":\"large\",\"gridRowsHeight\":\"large-row\"}",
+          "columnWidth": null
+        }
+      },
+      "support_time_range": true,
+      "additional_info": {
+        "query_tables": [
+          "asset_inventory",
+          "cloud_health_auditing"
+        ],
+        "query_uses_library": false
+      }
+    },
+    {
+      "widget_key": "xql_top_errors_message",
+      "title": "Top Error Messages",
+      "creation_time": 1763714771968,
+      "description": "Shows the top 10 error messages returned by cloud_health_auditing events.",
+      "data": {
+        "params": [
+          {
+            "name": "errors_only",
+            "value": "yes"
+          },
+          {
+            "name": "capability",
+            "value": "*"
+          },
+          {
+            "name": "provider",
+            "value": "*"
+          },
+          {
+            "name": "realm",
+            "value": "*"
+          },
+          {
+            "name": "asset_name",
+            "value": "*"
+          },
+          {
+            "name": "region",
+            "value": "*"
+          }
+        ],
+        "phrase": "dataset = cloud_health_auditing\n| filter classification not in (\"Informational\", \"Success\", \"Scanned\")\n| filter ($errors_only = \"no\") or error = \"*\"\n| filter capability in ($capability)\n| filter region IN ($region)\n| fields _time, account, capability, classification, error, message, region, connector, connector_id, resource_id\n\n| join (\n    dataset = asset_inventory\n\n    // -- Parameter filter wiring --\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.name IN ($asset_name)\n    | filter xdm.asset.cloud.region IN ($region)\n    // -- End parameter filters --\n\n    | fields xdm.asset.name, xdm.asset.provider, xdm.asset.realm, xdm.asset.strong_id, xdm.asset.id, xdm.asset.type.name, xdm.asset.type.category, xdm.asset.cloud.region\n) as asset asset.xdm.asset.name = account\n| alter summary_message = coalesce(message, \"No message provided\")\n| comp\n    count() as TOTAL\nby\n    summary_message\n| sort desc TOTAL\n| limit 15\n| fields TOTAL, summary_message\n",
+        "time_frame": {
+          "relativeTime": 86400000
+        },
+        "viewOptions": {
+          "type": "table",
+          "commands": []
+        },
+        "gridRawStorageInfo": {
+          "sort": null,
+          "coldefs": {},
+          "rowHeight": "{\"rowHeight\":\"regular\",\"gridRowsHeight\":\"medium-row\"}",
+          "columnWidth": null
+        }
+      },
+      "support_time_range": true,
+      "additional_info": {
+        "query_tables": [
+          "asset_inventory",
+          "cloud_health_auditing"
+        ],
+        "query_uses_library": false
+      }
+    },
+    {
+      "widget_key": "xql_top_errors_provider",
+      "title": "Errors by Provider",
+      "creation_time": 1763714770181,
+      "description": "Errors by Provider",
+      "data": {
+        "params": [
+          {
+            "name": "errors_only",
+            "value": "yes"
+          },
+          {
+            "name": "capability",
+            "value": "*"
+          },
+          {
+            "name": "provider",
+            "value": "*"
+          },
+          {
+            "name": "realm",
+            "value": "*"
+          },
+          {
+            "name": "asset_name",
+            "value": "*"
+          },
+          {
+            "name": "region",
+            "value": "*"
+          }
+        ],
+        "phrase": "dataset = cloud_health_auditing\n| filter classification not in (\"Informational\", \"Success\", \"Scanned\")\n| filter ($errors_only = \"no\") or error = \"*\"\n| filter capability in ($capability)\n| filter region IN ($region)\n| fields _time, account, capability, classification, error, message, region, connector, connector_id, resource_id\n\n| join (\n    dataset = asset_inventory\n\n    // -- Parameter filter wiring --\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.name IN ($asset_name)\n    | filter xdm.asset.cloud.region IN ($region)\n    // -- End parameter filters --\n\n    | fields xdm.asset.name, xdm.asset.provider, xdm.asset.realm, xdm.asset.strong_id, xdm.asset.id, xdm.asset.type.name, xdm.asset.type.category, xdm.asset.cloud.region\n) as asset asset.xdm.asset.name = account\n| alter asset_name = xdm.asset.name\n| comp\n    count() as TOTAL\nby\n    xdm.asset.provider\n| sort desc TOTAL\n| fields xdm.asset.provider, TOTAL\n\n\n| view graph type = pie subtype = full xaxis = xdm.asset.provider yaxis = TOTAL ",
+        "time_frame": {
+          "relativeTime": 86400000
+        },
+        "viewOptions": {
+          "type": "pie",
+          "commands": [
+            {
+              "command": {
+                "op": "=",
+                "name": "subtype",
+                "value": "full"
+              }
+            },
+            {
+              "command": {
+                "op": "=",
+                "name": "xaxis",
+                "value": "xdm.asset.provider"
+              }
+            },
+            {
+              "command": {
+                "op": "=",
+                "name": "yaxis",
+                "value": "TOTAL"
+              }
+            }
+          ]
+        }
+      },
+      "support_time_range": true,
+      "additional_info": {
+        "query_tables": [
+          "asset_inventory",
+          "cloud_health_auditing"
+        ],
+        "query_uses_library": false
+      }
+    },
+    {
+      "widget_key": "xql_1763668610549",
+      "title": "Top Failed/Errors Issues",
+      "creation_time": 1763714769418,
+      "description": "Aggregated view of assets with errors.",
+      "data": {
+        "params": [
+          {
+            "name": "capability",
+            "value": "*"
+          },
+          {
+            "name": "provider",
+            "value": "*"
+          },
+          {
+            "name": "realm",
+            "value": "*"
+          },
+          {
+            "name": "asset_name",
+            "value": "*"
+          },
+          {
+            "name": "region",
+            "value": "*"
+          }
+        ],
+        "phrase": "\ndataset = cloud_health_auditing\n| filter classification in (\"Error\", \"Failed\")\n| filter capability IN ($capability)\n| filter region IN ($region)\n| fields _time, account, capability, classification, error, message, region, connector, connector_id, resource_id\n\n// | filter error contains \"403\" or error contains \"service control\"\n| join (\n    dataset = asset_inventory\n    // -- Parameter filter wiring --\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.name IN ($asset_name)\n    | filter xdm.asset.cloud.region IN ($region)\n    // -- End parameter filters --\n\n    | fields xdm.asset.name, xdm.asset.provider, xdm.asset.realm, xdm.asset.strong_id, xdm.asset.id, xdm.asset.type.name, xdm.asset.type.category, xdm.asset.cloud.region\n) as asset asset.xdm.asset.name = account\n| alter asset_name = xdm.asset.name\n| comp\n    count() as TOTAL\nby\n    xdm.asset.provider,\n    asset_name,\n    message,\n    classification,\n    capability\n| sort desc TOTAL\n| fields TOTAL, xdm.asset.provider, asset_name, message, classification, capability\n",
+        "time_frame": {
+          "relativeTime": 86400000
+        },
+        "viewOptions": {
+          "type": "table",
+          "commands": []
+        },
+        "drilldown_config": {
+          "actionData": [
+            {
+              "param": "provider",
+              "value": "$row.xdm.asset.provider"
+            }
+          ],
+          "actionType": "in_dashboard_drilldown"
+        },
+        "gridRawStorageInfo": {
+          "sort": null,
+          "coldefs": {},
+          "rowHeight": "{\"rowHeight\":\"large\",\"gridRowsHeight\":\"large-row\"}",
+          "columnWidth": null
+        }
+      },
+      "support_time_range": true,
+      "additional_info": {
+        "query_tables": [
+          "asset_inventory",
+          "cloud_health_auditing"
+        ],
+        "query_uses_library": false
+      }
+    },
+    {
+      "widget_key": "xql_classification_by_capability_1763677992",
+      "title": "Classification Breakdown by Capability",
+      "creation_time": 1763714769957,
+      "description": "Classification Breakdown by Capability",
+      "data": {
+        "params": [
+          {
+            "name": "errors_only",
+            "value": "yes"
+          },
+          {
+            "name": "capability",
+            "value": "*"
+          },
+          {
+            "name": "provider",
+            "value": "*"
+          },
+          {
+            "name": "realm",
+            "value": "*"
+          },
+          {
+            "name": "asset_name",
+            "value": "*"
+          },
+          {
+            "name": "region",
+            "value": "*"
+          }
+        ],
+        "phrase": "dataset = cloud_health_auditing\n| filter classification not in (\"Informational\", \"Success\", \"Scanned\")\n| filter ($errors_only = \"no\") or error = \"*\"\n| filter capability in ($capability)\n| filter region IN ($region)\n| fields _time, account, capability, classification, error, message, region, connector, connector_id, resource_id\n\n| join (\n    dataset = asset_inventory\n\n    // -- Parameter filter wiring --\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.name IN ($asset_name)\n    | filter xdm.asset.cloud.region IN ($region)\n    // -- End parameter filters --\n\n    | fields xdm.asset.name, xdm.asset.provider, xdm.asset.realm, xdm.asset.strong_id, xdm.asset.id, xdm.asset.type.name, xdm.asset.type.category, xdm.asset.cloud.region\n) as asset asset.xdm.asset.name = account\n| comp\n    count() as TOTAL\nby\n    classification,\n    capability\n| sort desc TOTAL\n| fields TOTAL, classification, capability\n",
+        "time_frame": {
+          "relativeTime": 86400000
+        },
+        "viewOptions": {
+          "type": "table",
+          "commands": []
+        },
+        "drilldown_config": {
+          "actionData": [
+            {
+              "param": "capability",
+              "value": "$row.capability"
+            }
+          ],
+          "actionType": "in_dashboard_drilldown"
+        },
+        "gridRawStorageInfo": {
+          "sort": null,
+          "coldefs": {},
+          "rowHeight": "{\"rowHeight\":\"large\",\"gridRowsHeight\":\"large-row\"}",
+          "columnWidth": null
+        }
+      },
+      "support_time_range": true,
+      "additional_info": {
+        "query_tables": [
+          "asset_inventory",
+          "cloud_health_auditing"
+        ],
+        "query_uses_library": false
+      }
+    },
+    {
+      "widget_key": "xql_1763668945837",
+      "title": "Top Unsupported Issues",
+      "creation_time": 1763714769778,
+      "description": "Aggregated view of Unsupported assets",
+      "data": {
+        "params": [
+          {
+            "name": "capability",
+            "value": "*"
+          },
+          {
+            "name": "provider",
+            "value": "*"
+          },
+          {
+            "name": "realm",
+            "value": "*"
+          },
+          {
+            "name": "asset_name",
+            "value": "*"
+          },
+          {
+            "name": "region",
+            "value": "*"
+          }
+        ],
+        "phrase": "\ndataset = cloud_health_auditing\n| filter classification in (\"Unsupported\")\n| filter capability IN ($capability)\n| filter region IN ($region)\n| fields _time, account, capability, classification, error, message, region, connector, connector_id, resource_id\n\n// | filter error contains \"403\" or error contains \"service control\"\n| join (\n    dataset = asset_inventory\n    // -- Parameter filter wiring --\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.name IN ($asset_name)\n    | filter xdm.asset.cloud.region IN ($region)\n    // -- End parameter filters --\n\n    | fields xdm.asset.name, xdm.asset.provider, xdm.asset.realm, xdm.asset.strong_id, xdm.asset.id, xdm.asset.type.name, xdm.asset.type.category, xdm.asset.cloud.region\n) as asset asset.xdm.asset.name = account\n| alter asset_name = xdm.asset.name\n| comp\n    count() as TOTAL\nby\n    xdm.asset.provider,\n    asset_name,\n    message,\n    capability\n| sort desc TOTAL\n| fields TOTAL, xdm.asset.provider, asset_name, message, capability\n",
+        "time_frame": {
+          "relativeTime": 86400000
+        },
+        "viewOptions": {
+          "type": "table",
+          "commands": []
+        },
+        "drilldown_config": {
+          "actionData": [
+            {
+              "param": "provider",
+              "value": "$row.xdm.asset.provider"
+            }
+          ],
+          "actionType": "in_dashboard_drilldown"
+        },
+        "gridRawStorageInfo": {
+          "sort": null,
+          "coldefs": {},
+          "rowHeight": "{\"rowHeight\":\"large\",\"gridRowsHeight\":\"large-row\"}",
+          "columnWidth": null
+        }
+      },
+      "support_time_range": true,
+      "additional_info": {
+        "query_tables": [
+          "asset_inventory",
+          "cloud_health_auditing"
+        ],
+        "query_uses_library": false
+      }
+    },
+    {
+      "widget_key": "xql_1763667191005",
+      "title": "Top Classifications",
+      "creation_time": 1763714771019,
+      "description": "Shows the top 10 error messages returned by cloud_health_auditing events.",
+      "data": {
+        "params": [
+          {
+            "name": "errors_only",
+            "value": "yes"
+          },
+          {
+            "name": "capability",
+            "value": "*"
+          },
+          {
+            "name": "provider",
+            "value": "*"
+          },
+          {
+            "name": "realm",
+            "value": "*"
+          },
+          {
+            "name": "asset_name",
+            "value": "*"
+          },
+          {
+            "name": "region",
+            "value": "*"
+          }
+        ],
+        "phrase": "dataset = cloud_health_auditing\n// | filter classification not in (\"Informational\", \"Success\", \"Scanned\")\n| filter ($errors_only = \"no\") or error = \"*\"\n| filter capability in ($capability)\n| filter region IN ($region)\n| fields _time, account, capability, classification, error, message, region, connector, connector_id, resource_id\n\n| join (\n    dataset = asset_inventory\n\n    // -- Parameter filter wiring --\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.name IN ($asset_name)\n    | filter xdm.asset.cloud.region IN ($region)\n    // -- End parameter filters --\n\n    | fields xdm.asset.name, xdm.asset.provider, xdm.asset.realm, xdm.asset.strong_id, xdm.asset.id, xdm.asset.type.name, xdm.asset.type.category, xdm.asset.cloud.region\n) as asset asset.xdm.asset.name = account\n| alter summary_message = coalesce(message, \"No message provided\")\n| comp\n    count() as TOTAL\nby\n    classification\n| sort desc TOTAL\n| limit 10\n| fields classification, TOTAL\n\n\n\n| view graph type = pie subtype = full xaxis = classification yaxis = TOTAL ",
+        "time_frame": {
+          "relativeTime": 86400000
+        },
+        "viewOptions": {
+          "type": "pie",
+          "commands": [
+            {
+              "command": {
+                "op": "=",
+                "name": "subtype",
+                "value": "full"
+              }
+            },
+            {
+              "command": {
+                "op": "=",
+                "name": "xaxis",
+                "value": "classification"
+              }
+            },
+            {
+              "command": {
+                "op": "=",
+                "name": "yaxis",
+                "value": "TOTAL"
+              }
+            }
+          ]
+        }
+      },
+      "support_time_range": true,
+      "additional_info": {
+        "query_tables": [
+          "asset_inventory",
+          "cloud_health_auditing"
+        ],
+        "query_uses_library": false
+      }
+    },
+    {
+      "widget_key": "xql_1763652335154",
+      "title": "Failed/Error by Capability",
+      "creation_time": 1763714774250,
+      "description": "Errors by Capability",
+      "data": {
+        "params": [
+          {
+            "name": "errors_only",
+            "value": "yes"
+          },
+          {
+            "name": "capability",
+            "value": "*"
+          },
+          {
+            "name": "provider",
+            "value": "*"
+          },
+          {
+            "name": "realm",
+            "value": "*"
+          },
+          {
+            "name": "asset_name",
+            "value": "*"
+          },
+          {
+            "name": "region",
+            "value": "*"
+          }
+        ],
+        "phrase": "dataset = cloud_health_auditing\n| filter classification not in (\"Informational\", \"Success\", \"Scanned\")\n| filter ($errors_only = \"no\") or error = \"*\"\n| filter capability in ($capability)\n| filter region IN ($region)\n| fields _time, account, capability, classification, error, message, region, connector, connector_id, resource_id\n| join (\n    dataset = asset_inventory\n\n    // -- Parameter filter wiring --\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.name IN ($asset_name)\n    | filter xdm.asset.cloud.region IN ($region)\n    // -- End parameter filters --\n\n    | fields xdm.asset.name, xdm.asset.provider, xdm.asset.realm, xdm.asset.strong_id, xdm.asset.id, xdm.asset.type.name, xdm.asset.type.category, xdm.asset.cloud.region\n) as asset asset.xdm.asset.name = account\n| alter asset_name = xdm.asset.name\n| comp\n    count() as TOTAL\nby\n    capability\n| sort desc TOTAL\n| fields  TOTAL, capability\n\n\n\n// | view graph type = pie subtype = full xaxis = capability yaxis = TOTAL ",
+        "time_frame": {
+          "relativeTime": 86400000
+        },
+        "viewOptions": {
+          "type": "table",
+          "commands": []
+        },
+        "gridRawStorageInfo": {
+          "sort": null,
+          "coldefs": {},
+          "rowHeight": "{\"rowHeight\":\"regular\",\"gridRowsHeight\":\"medium-row\"}",
+          "columnWidth": null
+        }
+      },
+      "support_time_range": true,
+      "additional_info": {
+        "query_tables": [
+          "asset_inventory",
+          "cloud_health_auditing"
+        ],
+        "query_uses_library": false
+      }
+    },
+    {
+      "widget_key": "xql_top_errors_region",
+      "title": "Errors by Region",
+      "creation_time": 1763714779691,
+      "description": "Errors by Region",
+      "data": {
+        "params": [
+          {
+            "name": "errors_only",
+            "value": "yes"
+          },
+          {
+            "name": "capability",
+            "value": "*"
+          },
+          {
+            "name": "provider",
+            "value": "*"
+          },
+          {
+            "name": "realm",
+            "value": "*"
+          },
+          {
+            "name": "asset_name",
+            "value": "*"
+          },
+          {
+            "name": "region",
+            "value": "*"
+          }
+        ],
+        "phrase": "dataset = cloud_health_auditing\n| filter classification not in (\"Informational\", \"Success\", \"Scanned\")\n| filter ($errors_only = \"no\") or error = \"*\"\n| filter capability in ($capability)\n| filter region IN ($region)\n| fields _time, account, capability, classification, error, message, region, connector, connector_id, resource_id\n\n| join (\n    dataset = asset_inventory\n\n    // -- Parameter filter wiring --\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.name IN ($asset_name)\n    | filter xdm.asset.cloud.region IN ($region)\n    // -- End parameter filters --\n\n    | fields xdm.asset.name, xdm.asset.provider, xdm.asset.realm, xdm.asset.strong_id, xdm.asset.id, xdm.asset.type.name, xdm.asset.type.category, xdm.asset.cloud.region\n) as asset asset.xdm.asset.name = account\n| alter event_region = coalesce(region, \"Unknown\")\n| comp\n    count() as TOTAL\nby\n    event_region\n| sort desc TOTAL\n| fields event_region, TOTAL\n\n\n| view graph type = pie subtype = full xaxis = event_region yaxis = TOTAL ",
+        "time_frame": {
+          "relativeTime": 86400000
+        },
+        "viewOptions": {
+          "type": "pie",
+          "commands": [
+            {
+              "command": {
+                "op": "=",
+                "name": "subtype",
+                "value": "full"
+              }
+            },
+            {
+              "command": {
+                "op": "=",
+                "name": "xaxis",
+                "value": "event_region"
+              }
+            },
+            {
+              "command": {
+                "op": "=",
+                "name": "yaxis",
+                "value": "TOTAL"
+              }
+            }
+          ]
+        }
+      },
+      "support_time_range": true,
+      "additional_info": {
+        "query_tables": [
+          "asset_inventory",
+          "cloud_health_auditing"
+        ],
+        "query_uses_library": false
+      }
+    },
+    {
+      "widget_key": "xql_top_errors_table",
+      "title": "Cloud Health Error Details",
+      "creation_time": 1763714779844,
+      "description": "Detailed table of Cloud Health auditing events with joined asset context.",
+      "data": {
+        "params": [
+          {
+            "name": "errors_only",
+            "value": "yes"
+          },
+          {
+            "name": "capability",
+            "value": "*"
+          },
+          {
+            "name": "provider",
+            "value": "*"
+          },
+          {
+            "name": "realm",
+            "value": "*"
+          },
+          {
+            "name": "asset_name",
+            "value": "*"
+          },
+          {
+            "name": "region",
+            "value": "*"
+          }
+        ],
+        "phrase": "\ndataset = cloud_health_auditing\n| filter classification not in (\"Informational\", \"Success\", \"Scanned\")\n| filter ($errors_only = \"no\") or error = \"*\"\n| filter Capability in ($capability)\n| filter region IN ($region)\n| fields _time, account, Capability, classification, error, message, region, connector, connector_id, resource_id\n| join (\n    dataset = asset_inventory\n    // -- Parameter filter wiring --\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.name IN ($asset_name)\n    | filter xdm.asset.cloud.region IN ($region)\n    // -- End parameter filters --\n\n    | fields xdm.asset.name, xdm.asset.provider, xdm.asset.realm, xdm.asset.strong_id, xdm.asset.id, xdm.asset.type.name, xdm.asset.type.category, xdm.asset.cloud.region\n) as asset asset.xdm.asset.name = account\n| alter asset_name = xdm.asset.name\n| alter summary_message = coalesce(message, \"No message provided\")\n| fields\n    _time,\n    capability,\n    classification,\n    error,\n    connector,\n    connector_id,\n    region,\n    asset_name,\n    xdm.asset.provider,\n    xdm.asset.realm,\n    xdm.asset.strong_id,\n    summary_message,\n    resource_id\n| sort desc _time\n",
+        "time_frame": {
+          "relativeTime": 86400000
+        },
+        "viewOptions": {
+          "type": "table",
+          "commands": []
+        },
+        "gridRawStorageInfo": {
+          "sort": null,
+          "coldefs": {},
+          "rowHeight": "{\"rowHeight\":\"thin\",\"gridRowsHeight\":\"small-row\"}",
+          "columnWidth": null
+        }
+      },
+      "support_time_range": true,
+      "additional_info": {
+        "query_tables": [
+          "asset_inventory",
+          "cloud_health_auditing"
+        ],
+        "query_uses_library": false
+      }
+    }
+  ],
+  "id": "top_cloud_health_errors",
+  "name": "CNAPP -  Cloud Health Ingestion/Scan Status"
+}
