@@ -473,7 +473,7 @@
                 },
                 "drilldown_config": {
                   "actionData": {
-                    "url": "/assets/inventory?id=$row.asset_id&assetId=$row.asset_id",
+                    "url": "/assets/asset-layout/$row.asset_id",
                     "openInNewTab": true
                   },
                   "actionType": "open_custom_url"
@@ -538,7 +538,7 @@
                 },
                 "drilldown_config": {
                   "actionData": {
-                    "url": "/assets/inventory?id=$row.asset_id&assetId=$row.asset_id",
+                    "url": "/assets/asset-layout/$row.asset_id",
                     "openInNewTab": true
                   },
                   "actionType": "open_custom_url"
@@ -603,7 +603,7 @@
                 },
                 "drilldown_config": {
                   "actionData": {
-                    "url": "/assets/inventory?id=$row.asset_id&assetId=$row.asset_id",
+                    "url": "/assets/asset-layout/$row.asset_id",
                     "openInNewTab": true
                   },
                   "actionType": "open_custom_url"
@@ -668,7 +668,7 @@
                 },
                 "drilldown_config": {
                   "actionData": {
-                    "url": "/assets/inventory?id=$row.asset_id&assetId=$row.asset_id",
+                    "url": "/assets/asset-layout/$row.asset_id",
                     "openInNewTab": true
                   },
                   "actionType": "open_custom_url"
