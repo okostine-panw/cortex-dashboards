@@ -968,7 +968,7 @@
                     "value": "YES"
                   }
                 ],
-                "phrase": "\ndataset = issues\n| arrayexpand xdm.issue.asset_ids\n| join (\n    dataset = asset_inventory\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.cloud.region IN ($region)\n    | filter xdm.asset.type.category IN ($type_category)\n    | filter xdm.asset.type.class IN ($type_class)\n    | filter xdm.asset.type.name IN ($type_name)\n    | fields xdm.asset.id, xdm.asset.provider, xdm.asset.realm, xdm.asset.cloud.region, xdm.asset.name, xdm.asset.type.category, xdm.asset.type.name, xdm.asset.strong_id\n) as inventory inventory.xdm.asset.id = xdm.issue.asset_ids\n| join type = left (\n    dataset = case_to_issue \n    | fields xdm.case.id as case_id, xdm.issue.id as issue_id\n) as cases xdm.issue.id = cases.issue_id \n| filter ($linked_to_case != \"YES\") or case_id >= 0\n| filter xdm.issue.name IN ($issue_name)\n| filter xdm.issue.severity IN ($issue_severity)\n| filter xdm.issue.status.progress IN ($issue_status)\n| filter xdm.issue.category in ($issue_category)\n| filter ($exclude_vulnerability != \"YES\") or xdm.issue.category != \"VULNERABILITY\"\n| fields\n    xdm.issue.id as issue_id,\n    case_id,\n    _insert_time,\n    xdm.issue.name,\n    xdm.issue.severity,\n    xdm.issue.status.progress,\n    xdm.issue.category,\n    xdm.issue.type,\n    xdm.issue.owner,\n    xdm.issue.platform_severity,\n    xdm.issue.observation_time,\n    xdm.asset.name as asset_name,\n    xdm.asset.provider,\n    xdm.asset.realm,\n    xdm.asset.cloud.region,\n    xdm.asset.type.category,\n    xdm.asset.type.name,\n    xdm.asset.strong_id,\n    xdm.issue.description\n| sort desc issue_id ",
+                "phrase": "\ndataset = issues\n| arrayexpand xdm.issue.asset_ids\n| join (\n    dataset = asset_inventory\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.cloud.region IN ($region)\n    | filter xdm.asset.type.category IN ($type_category)\n    | filter xdm.asset.type.class IN ($type_class)\n    | filter xdm.asset.type.name IN ($type_name)\n    | fields xdm.asset.id, xdm.asset.provider, xdm.asset.realm, xdm.asset.cloud.region, xdm.asset.name, xdm.asset.type.category, xdm.asset.type.name, xdm.asset.strong_id\n) as inventory inventory.xdm.asset.id = xdm.issue.asset_ids\n| join type = left (\n    dataset = case_to_issue \n    | fields xdm.case.id as case_id, xdm.issue.id as issue_id\n) as cases xdm.issue.id = cases.issue_id \n| filter ($linked_to_case != \"YES\") or case_id >= 0\n| filter xdm.issue.name IN ($issue_name)\n| filter xdm.issue.severity IN ($issue_severity)\n| filter xdm.issue.status.progress IN ($issue_status)\n| filter xdm.issue.category in ($issue_category)\n| filter ($exclude_vulnerability != \"YES\") or xdm.issue.category != \"VULNERABILITY\"\n| fields\n    xdm.issue.id,\n    case_id,\n    _insert_time,\n    xdm.issue.name,\n    xdm.issue.severity,\n    xdm.issue.status.progress,\n    xdm.issue.category,\n    xdm.issue.type,\n    xdm.issue.owner,\n    xdm.issue.platform_severity,\n    xdm.issue.observation_time,\n    xdm.asset.name as asset_name,\n    xdm.asset.provider,\n    xdm.asset.realm,\n    xdm.asset.cloud.region,\n    xdm.asset.type.category,\n    xdm.asset.type.name,\n    xdm.asset.strong_id,\n    xdm.issue.description\n| sort desc xdm.issue.id ",
                 "entityType": "xql-widget-table-d17789bb-14be-49b5-9af4-c40ca6c1c3a8",
                 "time_frame": {
                   "relativeTime": 86400000
@@ -979,7 +979,7 @@
                 },
                 "drilldown_config": {
                   "actionData": {
-                    "url": "/issue-view/$row.ISSUE_ID",
+                    "url": "/issue-view/$row.xdm.issue.id",
                     "openInNewTab": true
                   },
                   "actionType": "open_custom_url"
@@ -1038,7 +1038,7 @@
             "type": "DYNAMIC",
             "title": "Cloud Account",
             "value": [],
-            "executionID": "5f9886ef9a6d49_2665140_inv",
+            "executionID": "be137f21df9f4e_2582881_inv",
             "valueOptions": [],
             "investigation": {
               "ttl": "0",
@@ -1067,7 +1067,7 @@
             "type": "DYNAMIC",
             "title": "Region",
             "value": [],
-            "executionID": "dda0f28f2b8a4e_2665141_inv",
+            "executionID": "73936f68d8c445_2582882_inv",
             "valueOptions": [],
             "investigation": {
               "ttl": "0",
@@ -1475,7 +1475,7 @@
             "type": "DYNAMIC",
             "title": "Issue Name",
             "value": [],
-            "executionID": "69dcc14414dc47_2665139_inv",
+            "executionID": "f545c3718d5447_2582880_inv",
             "valueOptions": [],
             "investigation": {
               "ttl": "0",
@@ -1529,10 +1529,10 @@
   ],
   "widgets_data": [
     {
-      "widget_key": "xql_issues_type_class",
-      "title": "Issues by Asset Type Class",
-      "creation_time": 1765374001173,
-      "description": "Counts of correlated issues grouped by asset type class",
+      "widget_key": "xql_issues_provider",
+      "title": "Issues per Provider",
+      "creation_time": 1765373995542,
+      "description": "Distribution of correlated issues by asset provider",
       "data": {
         "params": [
           {
@@ -1581,10 +1581,10 @@
           },
           {
             "name": "exclude_vulnerability",
-            "value": "NO"
+            "value": "YES"
           }
         ],
-        "phrase": "dataset = issues\n| arrayexpand xdm.issue.asset_ids\n| join (\n    dataset = asset_inventory\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.cloud.region IN ($region)\n    | filter xdm.asset.type.category IN ($type_category)\n    | filter xdm.asset.type.class IN ($type_class)\n    | filter xdm.asset.type.name IN ($type_name)\n    | fields xdm.asset.id, xdm.asset.type.class\n) as inventory inventory.xdm.asset.id = xdm.issue.asset_ids\n\n| join type = left (\n    dataset = case_to_issue \n    | fields xdm.case.id as case_id, xdm.issue.id as issue_id\n) as cases xdm.issue.id = cases.issue_id \n| filter ($linked_to_case != \"YES\") or case_id >= 0\n\n| filter xdm.issue.name IN ($issue_name)\n| filter xdm.issue.severity IN ($issue_severity)\n| filter xdm.issue.status.progress IN ($issue_status)\n| filter xdm.issue.category in ($issue_category)\n| filter ($exclude_vulnerability != \"YES\") or xdm.issue.category != \"VULNERABILITY\"| comp count() as TOTAL by xdm.asset.type.class\n| fields xdm.asset.type.class, TOTAL\n| sort desc TOTAL\n\n\n| view graph type = pie subtype = full xaxis = xdm.asset.type.class yaxis = TOTAL ",
+        "phrase": "dataset = issues\n| arrayexpand xdm.issue.asset_ids\n| join (\n    dataset = asset_inventory\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.cloud.region IN ($region)\n    | filter xdm.asset.type.category IN ($type_category)\n    | filter xdm.asset.type.class IN ($type_class)\n    | filter xdm.asset.type.name IN ($type_name)\n    | fields xdm.asset.id, xdm.asset.provider\n) as inventory inventory.xdm.asset.id = xdm.issue.asset_ids\n\n| join type = left (\n    dataset = case_to_issue \n    | fields xdm.case.id as case_id, xdm.issue.id as issue_id\n) as cases xdm.issue.id = cases.issue_id \n| filter ($linked_to_case != \"YES\") or case_id >= 0\n\n| filter xdm.issue.name IN ($issue_name)\n| filter xdm.issue.severity IN ($issue_severity)\n| filter xdm.issue.status.progress IN ($issue_status)\n| filter xdm.issue.category in ($issue_category)\n| filter ($exclude_vulnerability != \"YES\") or xdm.issue.category != \"VULNERABILITY\"| comp count() as TOTAL by xdm.asset.provider\n| fields xdm.asset.provider, TOTAL\n| sort desc TOTAL\n\n\n| view graph type = pie subtype = full xaxis = xdm.asset.provider yaxis = TOTAL ",
         "time_frame": {
           "relativeTime": 86400000
         },
@@ -1602,7 +1602,7 @@
               "command": {
                 "op": "=",
                 "name": "xaxis",
-                "value": "xdm.asset.type.class"
+                "value": "xdm.asset.provider"
               }
             },
             {
@@ -1725,10 +1725,10 @@
       "creator_mail": ""
     },
     {
-      "widget_key": "xql_issues_status",
-      "title": "Issues by Status Progress",
-      "creation_time": 1765373998683,
-      "description": "Counts by issue workflow status",
+      "widget_key": "xql_issues_region",
+      "title": "Issues by Region",
+      "creation_time": 1765373999538,
+      "description": "Impact across cloud regions",
       "data": {
         "params": [
           {
@@ -1780,7 +1780,7 @@
             "value": "NO"
           }
         ],
-        "phrase": "dataset = issues\n| arrayexpand xdm.issue.asset_ids\n| join (\n    dataset = asset_inventory\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.cloud.region IN ($region)\n    | filter xdm.asset.type.category IN ($type_category)\n    | filter xdm.asset.type.class IN ($type_class)\n    | filter xdm.asset.type.name IN ($type_name)\n    | fields xdm.asset.id\n) as inventory inventory.xdm.asset.id = xdm.issue.asset_ids\n\n| join type = left (\n    dataset = case_to_issue \n    | fields xdm.case.id as case_id, xdm.issue.id as issue_id\n) as cases xdm.issue.id = cases.issue_id \n| filter ($linked_to_case != \"YES\") or case_id >= 0\n\n| filter xdm.issue.name IN ($issue_name)\n| filter xdm.issue.severity IN ($issue_severity)\n| filter xdm.issue.status.progress IN ($issue_status)\n| filter xdm.issue.category in ($issue_category)\n| filter ($exclude_vulnerability != \"YES\") or xdm.issue.category != \"VULNERABILITY\"| comp count() as TOTAL by xdm.issue.status.progress\n| fields xdm.issue.status.progress, TOTAL\n| sort desc TOTAL\n\n\n| view graph type = pie subtype = full xaxis = xdm.issue.status.progress yaxis = TOTAL ",
+        "phrase": "dataset = issues\n| arrayexpand xdm.issue.asset_ids\n| join (\n    dataset = asset_inventory\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.cloud.region IN ($region)\n    | filter xdm.asset.type.category IN ($type_category)\n    | filter xdm.asset.type.class IN ($type_class)\n    | filter xdm.asset.type.name IN ($type_name)\n    | fields xdm.asset.id, xdm.asset.cloud.region\n) as inventory inventory.xdm.asset.id = xdm.issue.asset_ids\n\n| join type = left (\n    dataset = case_to_issue \n    | fields xdm.case.id as case_id, xdm.issue.id as issue_id\n) as cases xdm.issue.id = cases.issue_id \n| filter ($linked_to_case != \"YES\") or case_id >= 0\n\n| filter xdm.issue.name IN ($issue_name)\n| filter xdm.issue.severity IN ($issue_severity)\n| filter xdm.issue.status.progress IN ($issue_status)\n| filter xdm.issue.category in ($issue_category)\n| filter ($exclude_vulnerability != \"YES\") or xdm.issue.category != \"VULNERABILITY\"| comp count() as TOTAL by xdm.asset.cloud.region\n| fields xdm.asset.cloud.region, TOTAL\n| sort desc TOTAL\n\n\n| view graph type = pie subtype = full xaxis = xdm.asset.cloud.region yaxis = TOTAL ",
         "time_frame": {
           "relativeTime": 86400000
         },
@@ -1798,7 +1798,7 @@
               "command": {
                 "op": "=",
                 "name": "xaxis",
-                "value": "xdm.issue.status.progress"
+                "value": "xdm.asset.cloud.region"
               }
             },
             {
@@ -1823,10 +1823,10 @@
       "creator_mail": ""
     },
     {
-      "widget_key": "xql_issues_provider",
-      "title": "Issues per Provider",
-      "creation_time": 1765373995542,
-      "description": "Distribution of correlated issues by asset provider",
+      "widget_key": "xql_issues_table",
+      "title": "Issue Details with Asset Context",
+      "creation_time": 1765373994219,
+      "description": "Detailed issue list enriched with asset inventory fields.",
       "data": {
         "params": [
           {
@@ -1878,7 +1878,203 @@
             "value": "YES"
           }
         ],
-        "phrase": "dataset = issues\n| arrayexpand xdm.issue.asset_ids\n| join (\n    dataset = asset_inventory\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.cloud.region IN ($region)\n    | filter xdm.asset.type.category IN ($type_category)\n    | filter xdm.asset.type.class IN ($type_class)\n    | filter xdm.asset.type.name IN ($type_name)\n    | fields xdm.asset.id, xdm.asset.provider\n) as inventory inventory.xdm.asset.id = xdm.issue.asset_ids\n\n| join type = left (\n    dataset = case_to_issue \n    | fields xdm.case.id as case_id, xdm.issue.id as issue_id\n) as cases xdm.issue.id = cases.issue_id \n| filter ($linked_to_case != \"YES\") or case_id >= 0\n\n| filter xdm.issue.name IN ($issue_name)\n| filter xdm.issue.severity IN ($issue_severity)\n| filter xdm.issue.status.progress IN ($issue_status)\n| filter xdm.issue.category in ($issue_category)\n| filter ($exclude_vulnerability != \"YES\") or xdm.issue.category != \"VULNERABILITY\"| comp count() as TOTAL by xdm.asset.provider\n| fields xdm.asset.provider, TOTAL\n| sort desc TOTAL\n\n\n| view graph type = pie subtype = full xaxis = xdm.asset.provider yaxis = TOTAL ",
+        "phrase": "\ndataset = issues\n| arrayexpand xdm.issue.asset_ids\n| join (\n    dataset = asset_inventory\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.cloud.region IN ($region)\n    | filter xdm.asset.type.category IN ($type_category)\n    | filter xdm.asset.type.class IN ($type_class)\n    | filter xdm.asset.type.name IN ($type_name)\n    | fields xdm.asset.id, xdm.asset.provider, xdm.asset.realm, xdm.asset.cloud.region, xdm.asset.name, xdm.asset.type.category, xdm.asset.type.name, xdm.asset.strong_id\n) as inventory inventory.xdm.asset.id = xdm.issue.asset_ids\n| join type = left (\n    dataset = case_to_issue \n    | fields xdm.case.id as case_id, xdm.issue.id as issue_id\n) as cases xdm.issue.id = cases.issue_id \n| filter ($linked_to_case != \"YES\") or case_id >= 0\n| filter xdm.issue.name IN ($issue_name)\n| filter xdm.issue.severity IN ($issue_severity)\n| filter xdm.issue.status.progress IN ($issue_status)\n| filter xdm.issue.category in ($issue_category)\n| filter ($exclude_vulnerability != \"YES\") or xdm.issue.category != \"VULNERABILITY\"\n| fields\n    xdm.issue.id,\n    case_id,\n    _insert_time,\n    xdm.issue.name,\n    xdm.issue.severity,\n    xdm.issue.status.progress,\n    xdm.issue.category,\n    xdm.issue.type,\n    xdm.issue.owner,\n    xdm.issue.platform_severity,\n    xdm.issue.observation_time,\n    xdm.asset.name as asset_name,\n    xdm.asset.provider,\n    xdm.asset.realm,\n    xdm.asset.cloud.region,\n    xdm.asset.type.category,\n    xdm.asset.type.name,\n    xdm.asset.strong_id,\n    xdm.issue.description\n| sort desc xdm.issue.id ",
+        "time_frame": {
+          "relativeTime": 86400000
+        },
+        "viewOptions": {
+          "type": "table",
+          "commands": []
+        },
+        "gridRawStorageInfo": {
+          "sort": null,
+          "coldefs": {},
+          "rowHeight": "{\"rowHeight\":\"thin\",\"gridRowsHeight\":\"small-row\"}",
+          "columnWidth": null
+        }
+      },
+      "support_time_range": true,
+      "additional_info": {
+        "query_tables": [
+          "asset_inventory",
+          "case_to_issue",
+          "issues"
+        ],
+        "query_uses_library": false
+      },
+      "creator_mail": ""
+    },
+    {
+      "widget_key": "xql_issues_name_bar",
+      "title": "Top Issue Names",
+      "creation_time": 1765373994896,
+      "description": "Top recurring issue signatures",
+      "data": {
+        "params": [
+          {
+            "name": "provider",
+            "value": "*"
+          },
+          {
+            "name": "realm",
+            "value": "*"
+          },
+          {
+            "name": "region",
+            "value": "*"
+          },
+          {
+            "name": "type_category",
+            "value": "*"
+          },
+          {
+            "name": "type_class",
+            "value": "*"
+          },
+          {
+            "name": "type_name",
+            "value": "*"
+          },
+          {
+            "name": "linked_to_case",
+            "value": "NO"
+          },
+          {
+            "name": "issue_name",
+            "value": "*"
+          },
+          {
+            "name": "issue_severity",
+            "value": "*"
+          },
+          {
+            "name": "issue_status",
+            "value": "*"
+          },
+          {
+            "name": "issue_category",
+            "value": "*"
+          },
+          {
+            "name": "exclude_vulnerability",
+            "value": "NO"
+          }
+        ],
+        "phrase": "dataset = issues\n| arrayexpand xdm.issue.asset_ids\n| join (\n    dataset = asset_inventory\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.cloud.region IN ($region)\n    | filter xdm.asset.type.category IN ($type_category)\n    | filter xdm.asset.type.class IN ($type_class)\n    | filter xdm.asset.type.name IN ($type_name)\n    | fields xdm.asset.id\n) as inventory inventory.xdm.asset.id = xdm.issue.asset_ids\n\n| join type = left (\n    dataset = case_to_issue \n    | fields xdm.case.id as case_id, xdm.issue.id as issue_id\n) as cases xdm.issue.id = cases.issue_id \n| filter ($linked_to_case != \"YES\") or case_id >= 0\n\n| filter xdm.issue.name IN ($issue_name)\n| filter xdm.issue.severity IN ($issue_severity)\n| filter xdm.issue.status.progress IN ($issue_status)\n| filter xdm.issue.category in ($issue_category)\n| filter ($exclude_vulnerability != \"YES\") or xdm.issue.category != \"VULNERABILITY\"| comp count() as TOTAL by xdm.issue.name\n| sort desc TOTAL\n| limit 15\n\n\n\n| view graph type = column subtype = grouped layout = horizontal xaxis = xdm.issue.name yaxis = TOTAL seriescolor(\"TOTAL\",\"#ec7c7c\") ",
+        "time_frame": {
+          "relativeTime": 86400000
+        },
+        "viewOptions": {
+          "type": "column",
+          "commands": [
+            {
+              "command": {
+                "op": "=",
+                "name": "subtype",
+                "value": "grouped"
+              }
+            },
+            {
+              "command": {
+                "op": "=",
+                "name": "layout",
+                "value": "horizontal"
+              }
+            },
+            {
+              "command": {
+                "op": "=",
+                "name": "xaxis",
+                "value": "xdm.issue.name"
+              }
+            },
+            {
+              "command": {
+                "op": "=",
+                "name": "yaxis",
+                "value": "TOTAL"
+              }
+            },
+            {
+              "func": {
+                "args": [
+                  "TOTAL",
+                  "#ec7c7c"
+                ],
+                "name": "seriescolor"
+              }
+            }
+          ]
+        }
+      },
+      "support_time_range": true,
+      "additional_info": {
+        "query_tables": [
+          "asset_inventory",
+          "case_to_issue",
+          "issues"
+        ],
+        "query_uses_library": false
+      },
+      "creator_mail": ""
+    },
+    {
+      "widget_key": "xql_issues_issue_category",
+      "title": "Issues by Category",
+      "creation_time": 1765373997975,
+      "description": "Breakdown of issues by category",
+      "data": {
+        "params": [
+          {
+            "name": "provider",
+            "value": "*"
+          },
+          {
+            "name": "realm",
+            "value": "*"
+          },
+          {
+            "name": "region",
+            "value": "*"
+          },
+          {
+            "name": "type_category",
+            "value": "*"
+          },
+          {
+            "name": "type_class",
+            "value": "*"
+          },
+          {
+            "name": "type_name",
+            "value": "*"
+          },
+          {
+            "name": "linked_to_case",
+            "value": "NO"
+          },
+          {
+            "name": "issue_name",
+            "value": "*"
+          },
+          {
+            "name": "issue_severity",
+            "value": "*"
+          },
+          {
+            "name": "issue_status",
+            "value": "*"
+          },
+          {
+            "name": "issue_category",
+            "value": "*"
+          },
+          {
+            "name": "exclude_vulnerability",
+            "value": "NO"
+          }
+        ],
+        "phrase": "dataset = issues\n| arrayexpand xdm.issue.asset_ids\n| join (\n    dataset = asset_inventory\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.cloud.region IN ($region)\n    | filter xdm.asset.type.category IN ($type_category)\n    | filter xdm.asset.type.class IN ($type_class)\n    | filter xdm.asset.type.name IN ($type_name)\n    | fields xdm.asset.id\n) as inventory inventory.xdm.asset.id = xdm.issue.asset_ids\n\n| join type = left (\n    dataset = case_to_issue \n    | fields xdm.case.id as case_id, xdm.issue.id as issue_id\n) as cases xdm.issue.id = cases.issue_id \n| filter ($linked_to_case != \"YES\") or case_id >= 0\n\n| filter xdm.issue.name IN ($issue_name)\n| filter xdm.issue.severity IN ($issue_severity)\n| filter xdm.issue.status.progress IN ($issue_status)\n| filter xdm.issue.category in ($issue_category)\n| filter ($exclude_vulnerability != \"YES\") or xdm.issue.category != \"VULNERABILITY\"| comp count() as TOTAL by xdm.issue.category\n| fields xdm.issue.category, TOTAL\n| sort desc TOTAL\n\n\n| view graph type = pie subtype = full xaxis = xdm.issue.category yaxis = TOTAL ",
         "time_frame": {
           "relativeTime": 86400000
         },
@@ -1896,7 +2092,7 @@
               "command": {
                 "op": "=",
                 "name": "xaxis",
-                "value": "xdm.asset.provider"
+                "value": "xdm.issue.category"
               }
             },
             {
@@ -2019,6 +2215,202 @@
       "creator_mail": ""
     },
     {
+      "widget_key": "xql_issues_status",
+      "title": "Issues by Status Progress",
+      "creation_time": 1765373998683,
+      "description": "Counts by issue workflow status",
+      "data": {
+        "params": [
+          {
+            "name": "provider",
+            "value": "*"
+          },
+          {
+            "name": "realm",
+            "value": "*"
+          },
+          {
+            "name": "region",
+            "value": "*"
+          },
+          {
+            "name": "type_category",
+            "value": "*"
+          },
+          {
+            "name": "type_class",
+            "value": "*"
+          },
+          {
+            "name": "type_name",
+            "value": "*"
+          },
+          {
+            "name": "linked_to_case",
+            "value": "NO"
+          },
+          {
+            "name": "issue_name",
+            "value": "*"
+          },
+          {
+            "name": "issue_severity",
+            "value": "*"
+          },
+          {
+            "name": "issue_status",
+            "value": "*"
+          },
+          {
+            "name": "issue_category",
+            "value": "*"
+          },
+          {
+            "name": "exclude_vulnerability",
+            "value": "NO"
+          }
+        ],
+        "phrase": "dataset = issues\n| arrayexpand xdm.issue.asset_ids\n| join (\n    dataset = asset_inventory\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.cloud.region IN ($region)\n    | filter xdm.asset.type.category IN ($type_category)\n    | filter xdm.asset.type.class IN ($type_class)\n    | filter xdm.asset.type.name IN ($type_name)\n    | fields xdm.asset.id\n) as inventory inventory.xdm.asset.id = xdm.issue.asset_ids\n\n| join type = left (\n    dataset = case_to_issue \n    | fields xdm.case.id as case_id, xdm.issue.id as issue_id\n) as cases xdm.issue.id = cases.issue_id \n| filter ($linked_to_case != \"YES\") or case_id >= 0\n\n| filter xdm.issue.name IN ($issue_name)\n| filter xdm.issue.severity IN ($issue_severity)\n| filter xdm.issue.status.progress IN ($issue_status)\n| filter xdm.issue.category in ($issue_category)\n| filter ($exclude_vulnerability != \"YES\") or xdm.issue.category != \"VULNERABILITY\"| comp count() as TOTAL by xdm.issue.status.progress\n| fields xdm.issue.status.progress, TOTAL\n| sort desc TOTAL\n\n\n| view graph type = pie subtype = full xaxis = xdm.issue.status.progress yaxis = TOTAL ",
+        "time_frame": {
+          "relativeTime": 86400000
+        },
+        "viewOptions": {
+          "type": "pie",
+          "commands": [
+            {
+              "command": {
+                "op": "=",
+                "name": "subtype",
+                "value": "full"
+              }
+            },
+            {
+              "command": {
+                "op": "=",
+                "name": "xaxis",
+                "value": "xdm.issue.status.progress"
+              }
+            },
+            {
+              "command": {
+                "op": "=",
+                "name": "yaxis",
+                "value": "TOTAL"
+              }
+            }
+          ]
+        }
+      },
+      "support_time_range": true,
+      "additional_info": {
+        "query_tables": [
+          "asset_inventory",
+          "case_to_issue",
+          "issues"
+        ],
+        "query_uses_library": false
+      },
+      "creator_mail": ""
+    },
+    {
+      "widget_key": "xql_issues_type_class",
+      "title": "Issues by Asset Type Class",
+      "creation_time": 1765374001173,
+      "description": "Counts of correlated issues grouped by asset type class",
+      "data": {
+        "params": [
+          {
+            "name": "provider",
+            "value": "*"
+          },
+          {
+            "name": "realm",
+            "value": "*"
+          },
+          {
+            "name": "region",
+            "value": "*"
+          },
+          {
+            "name": "type_category",
+            "value": "*"
+          },
+          {
+            "name": "type_class",
+            "value": "*"
+          },
+          {
+            "name": "type_name",
+            "value": "*"
+          },
+          {
+            "name": "linked_to_case",
+            "value": "NO"
+          },
+          {
+            "name": "issue_name",
+            "value": "*"
+          },
+          {
+            "name": "issue_severity",
+            "value": "*"
+          },
+          {
+            "name": "issue_status",
+            "value": "*"
+          },
+          {
+            "name": "issue_category",
+            "value": "*"
+          },
+          {
+            "name": "exclude_vulnerability",
+            "value": "NO"
+          }
+        ],
+        "phrase": "dataset = issues\n| arrayexpand xdm.issue.asset_ids\n| join (\n    dataset = asset_inventory\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.cloud.region IN ($region)\n    | filter xdm.asset.type.category IN ($type_category)\n    | filter xdm.asset.type.class IN ($type_class)\n    | filter xdm.asset.type.name IN ($type_name)\n    | fields xdm.asset.id, xdm.asset.type.class\n) as inventory inventory.xdm.asset.id = xdm.issue.asset_ids\n\n| join type = left (\n    dataset = case_to_issue \n    | fields xdm.case.id as case_id, xdm.issue.id as issue_id\n) as cases xdm.issue.id = cases.issue_id \n| filter ($linked_to_case != \"YES\") or case_id >= 0\n\n| filter xdm.issue.name IN ($issue_name)\n| filter xdm.issue.severity IN ($issue_severity)\n| filter xdm.issue.status.progress IN ($issue_status)\n| filter xdm.issue.category in ($issue_category)\n| filter ($exclude_vulnerability != \"YES\") or xdm.issue.category != \"VULNERABILITY\"| comp count() as TOTAL by xdm.asset.type.class\n| fields xdm.asset.type.class, TOTAL\n| sort desc TOTAL\n\n\n| view graph type = pie subtype = full xaxis = xdm.asset.type.class yaxis = TOTAL ",
+        "time_frame": {
+          "relativeTime": 86400000
+        },
+        "viewOptions": {
+          "type": "pie",
+          "commands": [
+            {
+              "command": {
+                "op": "=",
+                "name": "subtype",
+                "value": "full"
+              }
+            },
+            {
+              "command": {
+                "op": "=",
+                "name": "xaxis",
+                "value": "xdm.asset.type.class"
+              }
+            },
+            {
+              "command": {
+                "op": "=",
+                "name": "yaxis",
+                "value": "TOTAL"
+              }
+            }
+          ]
+        }
+      },
+      "support_time_range": true,
+      "additional_info": {
+        "query_tables": [
+          "asset_inventory",
+          "case_to_issue",
+          "issues"
+        ],
+        "query_uses_library": false
+      },
+      "creator_mail": ""
+    },
+    {
       "widget_key": "xql_issues_category",
       "title": "Issues by Asset Type Category",
       "creation_time": 1765374000496,
@@ -2100,398 +2492,6 @@
                 "op": "=",
                 "name": "yaxis",
                 "value": "TOTAL"
-              }
-            }
-          ]
-        }
-      },
-      "support_time_range": true,
-      "additional_info": {
-        "query_tables": [
-          "asset_inventory",
-          "case_to_issue",
-          "issues"
-        ],
-        "query_uses_library": false
-      },
-      "creator_mail": ""
-    },
-    {
-      "widget_key": "xql_issues_issue_category",
-      "title": "Issues by Category",
-      "creation_time": 1765373997975,
-      "description": "Breakdown of issues by category",
-      "data": {
-        "params": [
-          {
-            "name": "provider",
-            "value": "*"
-          },
-          {
-            "name": "realm",
-            "value": "*"
-          },
-          {
-            "name": "region",
-            "value": "*"
-          },
-          {
-            "name": "type_category",
-            "value": "*"
-          },
-          {
-            "name": "type_class",
-            "value": "*"
-          },
-          {
-            "name": "type_name",
-            "value": "*"
-          },
-          {
-            "name": "linked_to_case",
-            "value": "NO"
-          },
-          {
-            "name": "issue_name",
-            "value": "*"
-          },
-          {
-            "name": "issue_severity",
-            "value": "*"
-          },
-          {
-            "name": "issue_status",
-            "value": "*"
-          },
-          {
-            "name": "issue_category",
-            "value": "*"
-          },
-          {
-            "name": "exclude_vulnerability",
-            "value": "NO"
-          }
-        ],
-        "phrase": "dataset = issues\n| arrayexpand xdm.issue.asset_ids\n| join (\n    dataset = asset_inventory\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.cloud.region IN ($region)\n    | filter xdm.asset.type.category IN ($type_category)\n    | filter xdm.asset.type.class IN ($type_class)\n    | filter xdm.asset.type.name IN ($type_name)\n    | fields xdm.asset.id\n) as inventory inventory.xdm.asset.id = xdm.issue.asset_ids\n\n| join type = left (\n    dataset = case_to_issue \n    | fields xdm.case.id as case_id, xdm.issue.id as issue_id\n) as cases xdm.issue.id = cases.issue_id \n| filter ($linked_to_case != \"YES\") or case_id >= 0\n\n| filter xdm.issue.name IN ($issue_name)\n| filter xdm.issue.severity IN ($issue_severity)\n| filter xdm.issue.status.progress IN ($issue_status)\n| filter xdm.issue.category in ($issue_category)\n| filter ($exclude_vulnerability != \"YES\") or xdm.issue.category != \"VULNERABILITY\"| comp count() as TOTAL by xdm.issue.category\n| fields xdm.issue.category, TOTAL\n| sort desc TOTAL\n\n\n| view graph type = pie subtype = full xaxis = xdm.issue.category yaxis = TOTAL ",
-        "time_frame": {
-          "relativeTime": 86400000
-        },
-        "viewOptions": {
-          "type": "pie",
-          "commands": [
-            {
-              "command": {
-                "op": "=",
-                "name": "subtype",
-                "value": "full"
-              }
-            },
-            {
-              "command": {
-                "op": "=",
-                "name": "xaxis",
-                "value": "xdm.issue.category"
-              }
-            },
-            {
-              "command": {
-                "op": "=",
-                "name": "yaxis",
-                "value": "TOTAL"
-              }
-            }
-          ]
-        }
-      },
-      "support_time_range": true,
-      "additional_info": {
-        "query_tables": [
-          "asset_inventory",
-          "case_to_issue",
-          "issues"
-        ],
-        "query_uses_library": false
-      },
-      "creator_mail": ""
-    },
-    {
-      "widget_key": "xql_issues_table",
-      "title": "Issue Details with Asset Context",
-      "creation_time": 1765373994219,
-      "description": "Detailed issue list enriched with asset inventory fields.",
-      "data": {
-        "params": [
-          {
-            "name": "provider",
-            "value": "*"
-          },
-          {
-            "name": "realm",
-            "value": "*"
-          },
-          {
-            "name": "region",
-            "value": "*"
-          },
-          {
-            "name": "type_category",
-            "value": "*"
-          },
-          {
-            "name": "type_class",
-            "value": "*"
-          },
-          {
-            "name": "type_name",
-            "value": "*"
-          },
-          {
-            "name": "linked_to_case",
-            "value": "NO"
-          },
-          {
-            "name": "issue_name",
-            "value": "*"
-          },
-          {
-            "name": "issue_severity",
-            "value": "*"
-          },
-          {
-            "name": "issue_status",
-            "value": "*"
-          },
-          {
-            "name": "issue_category",
-            "value": "*"
-          },
-          {
-            "name": "exclude_vulnerability",
-            "value": "YES"
-          }
-        ],
-        "phrase": "\ndataset = issues\n| arrayexpand xdm.issue.asset_ids\n| join (\n    dataset = asset_inventory\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.cloud.region IN ($region)\n    | filter xdm.asset.type.category IN ($type_category)\n    | filter xdm.asset.type.class IN ($type_class)\n    | filter xdm.asset.type.name IN ($type_name)\n    | fields xdm.asset.id, xdm.asset.provider, xdm.asset.realm, xdm.asset.cloud.region, xdm.asset.name, xdm.asset.type.category, xdm.asset.type.name, xdm.asset.strong_id\n) as inventory inventory.xdm.asset.id = xdm.issue.asset_ids\n| join type = left (\n    dataset = case_to_issue \n    | fields xdm.case.id as case_id, xdm.issue.id as issue_id\n) as cases xdm.issue.id = cases.issue_id \n| filter ($linked_to_case != \"YES\") or case_id >= 0\n| filter xdm.issue.name IN ($issue_name)\n| filter xdm.issue.severity IN ($issue_severity)\n| filter xdm.issue.status.progress IN ($issue_status)\n| filter xdm.issue.category in ($issue_category)\n| filter ($exclude_vulnerability != \"YES\") or xdm.issue.category != \"VULNERABILITY\"\n| fields\n    xdm.issue.id as issue_id,\n    case_id,\n    _insert_time,\n    xdm.issue.name,\n    xdm.issue.severity,\n    xdm.issue.status.progress,\n    xdm.issue.category,\n    xdm.issue.type,\n    xdm.issue.owner,\n    xdm.issue.platform_severity,\n    xdm.issue.observation_time,\n    xdm.asset.name as asset_name,\n    xdm.asset.provider,\n    xdm.asset.realm,\n    xdm.asset.cloud.region,\n    xdm.asset.type.category,\n    xdm.asset.type.name,\n    xdm.asset.strong_id,\n    xdm.issue.description\n| sort desc issue_id ",
-        "time_frame": {
-          "relativeTime": 86400000
-        },
-        "viewOptions": {
-          "type": "table",
-          "commands": []
-        },
-        "gridRawStorageInfo": {
-          "sort": null,
-          "coldefs": {},
-          "rowHeight": "{\"rowHeight\":\"thin\",\"gridRowsHeight\":\"small-row\"}",
-          "columnWidth": null
-        }
-      },
-      "support_time_range": true,
-      "additional_info": {
-        "query_tables": [
-          "asset_inventory",
-          "issues",
-          "case_to_issue"
-        ],
-        "query_uses_library": false
-      },
-      "creator_mail": ""
-    },
-    {
-      "widget_key": "xql_issues_region",
-      "title": "Issues by Region",
-      "creation_time": 1765373999538,
-      "description": "Impact across cloud regions",
-      "data": {
-        "params": [
-          {
-            "name": "provider",
-            "value": "*"
-          },
-          {
-            "name": "realm",
-            "value": "*"
-          },
-          {
-            "name": "region",
-            "value": "*"
-          },
-          {
-            "name": "type_category",
-            "value": "*"
-          },
-          {
-            "name": "type_class",
-            "value": "*"
-          },
-          {
-            "name": "type_name",
-            "value": "*"
-          },
-          {
-            "name": "linked_to_case",
-            "value": "NO"
-          },
-          {
-            "name": "issue_name",
-            "value": "*"
-          },
-          {
-            "name": "issue_severity",
-            "value": "*"
-          },
-          {
-            "name": "issue_status",
-            "value": "*"
-          },
-          {
-            "name": "issue_category",
-            "value": "*"
-          },
-          {
-            "name": "exclude_vulnerability",
-            "value": "NO"
-          }
-        ],
-        "phrase": "dataset = issues\n| arrayexpand xdm.issue.asset_ids\n| join (\n    dataset = asset_inventory\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.cloud.region IN ($region)\n    | filter xdm.asset.type.category IN ($type_category)\n    | filter xdm.asset.type.class IN ($type_class)\n    | filter xdm.asset.type.name IN ($type_name)\n    | fields xdm.asset.id, xdm.asset.cloud.region\n) as inventory inventory.xdm.asset.id = xdm.issue.asset_ids\n\n| join type = left (\n    dataset = case_to_issue \n    | fields xdm.case.id as case_id, xdm.issue.id as issue_id\n) as cases xdm.issue.id = cases.issue_id \n| filter ($linked_to_case != \"YES\") or case_id >= 0\n\n| filter xdm.issue.name IN ($issue_name)\n| filter xdm.issue.severity IN ($issue_severity)\n| filter xdm.issue.status.progress IN ($issue_status)\n| filter xdm.issue.category in ($issue_category)\n| filter ($exclude_vulnerability != \"YES\") or xdm.issue.category != \"VULNERABILITY\"| comp count() as TOTAL by xdm.asset.cloud.region\n| fields xdm.asset.cloud.region, TOTAL\n| sort desc TOTAL\n\n\n| view graph type = pie subtype = full xaxis = xdm.asset.cloud.region yaxis = TOTAL ",
-        "time_frame": {
-          "relativeTime": 86400000
-        },
-        "viewOptions": {
-          "type": "pie",
-          "commands": [
-            {
-              "command": {
-                "op": "=",
-                "name": "subtype",
-                "value": "full"
-              }
-            },
-            {
-              "command": {
-                "op": "=",
-                "name": "xaxis",
-                "value": "xdm.asset.cloud.region"
-              }
-            },
-            {
-              "command": {
-                "op": "=",
-                "name": "yaxis",
-                "value": "TOTAL"
-              }
-            }
-          ]
-        }
-      },
-      "support_time_range": true,
-      "additional_info": {
-        "query_tables": [
-          "asset_inventory",
-          "case_to_issue",
-          "issues"
-        ],
-        "query_uses_library": false
-      },
-      "creator_mail": ""
-    },
-    {
-      "widget_key": "xql_issues_name_bar",
-      "title": "Top Issue Names",
-      "creation_time": 1765373994896,
-      "description": "Top recurring issue signatures",
-      "data": {
-        "params": [
-          {
-            "name": "provider",
-            "value": "*"
-          },
-          {
-            "name": "realm",
-            "value": "*"
-          },
-          {
-            "name": "region",
-            "value": "*"
-          },
-          {
-            "name": "type_category",
-            "value": "*"
-          },
-          {
-            "name": "type_class",
-            "value": "*"
-          },
-          {
-            "name": "type_name",
-            "value": "*"
-          },
-          {
-            "name": "linked_to_case",
-            "value": "NO"
-          },
-          {
-            "name": "issue_name",
-            "value": "*"
-          },
-          {
-            "name": "issue_severity",
-            "value": "*"
-          },
-          {
-            "name": "issue_status",
-            "value": "*"
-          },
-          {
-            "name": "issue_category",
-            "value": "*"
-          },
-          {
-            "name": "exclude_vulnerability",
-            "value": "NO"
-          }
-        ],
-        "phrase": "dataset = issues\n| arrayexpand xdm.issue.asset_ids\n| join (\n    dataset = asset_inventory\n    | filter xdm.asset.provider IN ($provider)\n    | filter xdm.asset.realm IN ($realm)\n    | filter xdm.asset.cloud.region IN ($region)\n    | filter xdm.asset.type.category IN ($type_category)\n    | filter xdm.asset.type.class IN ($type_class)\n    | filter xdm.asset.type.name IN ($type_name)\n    | fields xdm.asset.id\n) as inventory inventory.xdm.asset.id = xdm.issue.asset_ids\n\n| join type = left (\n    dataset = case_to_issue \n    | fields xdm.case.id as case_id, xdm.issue.id as issue_id\n) as cases xdm.issue.id = cases.issue_id \n| filter ($linked_to_case != \"YES\") or case_id >= 0\n\n| filter xdm.issue.name IN ($issue_name)\n| filter xdm.issue.severity IN ($issue_severity)\n| filter xdm.issue.status.progress IN ($issue_status)\n| filter xdm.issue.category in ($issue_category)\n| filter ($exclude_vulnerability != \"YES\") or xdm.issue.category != \"VULNERABILITY\"| comp count() as TOTAL by xdm.issue.name\n| sort desc TOTAL\n| limit 15\n\n\n\n| view graph type = column subtype = grouped layout = horizontal xaxis = xdm.issue.name yaxis = TOTAL seriescolor(\"TOTAL\",\"#ec7c7c\") ",
-        "time_frame": {
-          "relativeTime": 86400000
-        },
-        "viewOptions": {
-          "type": "column",
-          "commands": [
-            {
-              "command": {
-                "op": "=",
-                "name": "subtype",
-                "value": "grouped"
-              }
-            },
-            {
-              "command": {
-                "op": "=",
-                "name": "layout",
-                "value": "horizontal"
-              }
-            },
-            {
-              "command": {
-                "op": "=",
-                "name": "xaxis",
-                "value": "xdm.issue.name"
-              }
-            },
-            {
-              "command": {
-                "op": "=",
-                "name": "yaxis",
-                "value": "TOTAL"
-              }
-            },
-            {
-              "func": {
-                "args": [
-                  "TOTAL",
-                  "#ec7c7c"
-                ],
-                "name": "seriescolor"
               }
             }
           ]
