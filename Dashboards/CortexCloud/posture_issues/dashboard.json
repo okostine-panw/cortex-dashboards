@@ -1911,7 +1911,7 @@
     },
     {
       "widget_key": "xql_issues_status",
-      "title": "Issues by Status Progress",
+      "title": "Status Progress",
       "creation_time": 1768351085557,
       "description": "Counts by issue workflow status",
       "data": {
@@ -2113,7 +2113,7 @@
     },
     {
       "widget_key": "xql_issues_region",
-      "title": "Issues by Region",
+      "title": "Region",
       "creation_time": 1768351080298,
       "description": "Impact across cloud regions",
       "data": {
@@ -2222,7 +2222,7 @@
     },
     {
       "widget_key": "xql_issues_issue_category",
-      "title": "Issues by Category",
+      "title": "Category",
       "creation_time": 1768351083483,
       "description": "Breakdown of issues by category",
       "data": {
@@ -2337,7 +2337,7 @@
     },
     {
       "widget_key": "xql_issues_provider",
-      "title": "Issues per Provider",
+      "title": "Provider",
       "creation_time": 1768351078059,
       "description": "Distribution of correlated issues by asset provider",
       "data": {
@@ -2446,7 +2446,7 @@
     },
     {
       "widget_key": "xql_1768313717683",
-      "title": "Issues by  Detection Method",
+      "title": " Detection Method",
       "creation_time": 1768351087164,
       "description": "Counts grouped by asset type name",
       "data": {
@@ -2561,7 +2561,7 @@
     },
     {
       "widget_key": "xql_issues_realm",
-      "title": "Issues by Cloud Account",
+      "title": "Cloud Account",
       "creation_time": 1768351077738,
       "description": "Distribution of correlated issues by cloud account/realm",
       "data": {
@@ -2670,7 +2670,7 @@
     },
     {
       "widget_key": "xql_issues_type_class",
-      "title": "Issues by Asset Type Class",
+      "title": "Asset Type Class",
       "creation_time": 1768351087490,
       "description": "Counts of correlated issues grouped by asset type class",
       "data": {
@@ -2785,7 +2785,7 @@
     },
     {
       "widget_key": "xql_issues_category",
-      "title": "Issues by Asset Type Category",
+      "title": "Asset Type Category",
       "creation_time": 1768351086806,
       "description": "Counts of correlated issues by asset category",
       "data": {
@@ -2900,7 +2900,7 @@
     },
     {
       "widget_key": "xql_issues_type_name",
-      "title": "Issues by Asset Type Name",
+      "title": "Asset Type Name",
       "creation_time": 1768351087869,
       "description": "Counts grouped by asset type name",
       "data": {
