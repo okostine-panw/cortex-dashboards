@@ -1,6 +1,6 @@
-## CNAPP - Posture Issues Dashboard (with Asset Group filter)
+## CNAPP - SecOps Issues Analysis Dashboard (with Asset Group filter)
 
-- [CNAPP - Posture Issues Dashboard (with Asset Group filter)](#cnapp---posture-issues-dashboard-with-asset-group-filter)
+- [CNAPP - SecOps Issues Analysis Dashboard (with Asset Group filter)](#cnapp---secops-issues-analysis-dashboard-with-asset-group-filter)
     - [Repository Files](#repository-files)
     - [Description](#description)
     - [Filters](#filters)
