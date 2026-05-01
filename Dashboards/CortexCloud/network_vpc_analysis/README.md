@@ -1,6 +1,6 @@
-## CORTEX - Network Flows Connections Analysis Dashboard
+## CORTEX - AWS VPC Network Flows Analysis Dashboard
 
-- [CORTEX - Network Flows Connections Analysis Dashboard](#cortex---network-flows-connections-analysis-dashboard)
+- [CORTEX - AWS VPC Network Flows Analysis Dashboard](#cortex---aws-vpc-network-flows-analysis-dashboard)
     - [Repository Files](#repository-files)
     - [Description](#description)
     - [Filters](#filters)
@@ -21,9 +21,7 @@
 
 #### Description
 
-Network flow log analysis built on the network_story preset. Covers all traffic product types — geo-distribution, top processes, protocol analysis, port usage, hourly trends, unsigned process detection, IMDS access, causality chain anomalies, and full flow details.
-
-This dashboard allows you to investigate network flows ingested with Flow Logs from Cloud providers, as well as network statistics from XDR agent ingestion.
+Cloud VPC flow log analysis built on raw cloud audit logs (Cloud Flow Log filter). Covers AWS VPC Flow Logs (amazon_aws_raw) . Includes traffic volume, byte-level analysis, TCP flags, ACCEPT/REJECT breakdown, IMDS detection, geo-location, and full flow detail tables. Replaces network_story preset which lacked volume data and included rejected connections.
 
 Min transfer bytes filter can be used to filter out connections that do not exchange any data.
 
@@ -37,18 +35,15 @@ Use the filters and drilldowns to investigate you network flows and create Corre
 
 #### Filters
 
-- Hostname (XDR Agent)
-- Remote IP
-- Public IP
-- Dst Hostname  (XDR Agent)
-- Country
-- Remote Port
-- Process Name (XDR Agent)
-- Username (XDR Agent)
-- Product - Data Ingestion Source (AWS/Azure/GCP/XDR Agent/Route53)
+- Source IP
+- Destination IP
+- Action
+- Destination Port
 - Protocol
-- Local IP
-- Network Success (default - true)
+- Destination Country
+- Source Country
+- VPC
+- TCP Flag
 - Min Transfer (Bytes) (default - 100)
 
 > [!NOTE]
