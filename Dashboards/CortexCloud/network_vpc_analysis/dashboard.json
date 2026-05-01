@@ -1,7 +1,7 @@
 {
   "dashboards_data": [
     {
-      "name": "CORTEX - AWS VPC Network Flows Analysis",
+      "name": "CORTEX - [AWS VPC Network Flows Analysis]",
       "description": "Cloud VPCflow log analysis built on raw cloud audit logs (Cloud Flow Log filter). Covers AWS VPC Flow Logs (amazon_aws_raw) and Azure NSG Flow Logs (msft_azure_raw) with GCP placeholder. Includes traffic volume, byte-level analysis, TCP flags, ACCEPT/REJECT breakdown, IMDS detection, geo-location, and full flow detail tables.  replaces network_story preset which lacked volume data and included rejected connections.",
       "status": "ENABLED",
       "layout": [
@@ -3270,5 +3270,5 @@
     }
   ],
   "id": "cloud_flow_logs_v4",
-  "name": "CORTEX - AWS VPC Network Flows Analysis"
+  "name": "CORTEX - [AWS VPC Network Flows Analysis]"
 }

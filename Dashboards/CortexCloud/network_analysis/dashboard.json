@@ -1,7 +1,7 @@
 {
   "dashboards_data": [
     {
-      "name": "Network Flows Connections Analysis",
+      "name": "CORTEX - [Network Flows Connections Analysis]",
       "description": "Network flow log analysis built on the network_story preset. Covers all traffic product types — geo-distribution, top processes, protocol analysis, port usage, hourly trends, unsigned process detection, IMDS access, causality chain anomalies, and full flow details.",
       "status": "ENABLED",
       "layout": [
@@ -3590,5 +3590,5 @@
     }
   ],
   "id": "a68bb03391f24023861c737b9842a98d",
-  "name": "CORTEX - Network Flows Connections Analysis"
+  "name": "CORTEX - [Network Flows Connections Analysis]"
 }

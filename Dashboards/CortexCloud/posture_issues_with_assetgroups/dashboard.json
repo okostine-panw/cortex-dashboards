@@ -1,7 +1,7 @@
 {
   "dashboards_data": [
     {
-      "name": "CNAPP - SecOps Issues Analysis",
+      "name": "CNAPP - [SecOps Issues Analysis]",
       "description": "Combined view of CNAPP issues with detailed breakdowns by severity, status, category, and asset context. Filters for multiple parameters, including the Asset group names",
       "status": "ENABLED",
       "layout": [
@@ -3014,6 +3014,6 @@
       "is_predefined": false
     }
   ],
-  "id": "cnapp_posture_issues_combined",
-  "name": "CNAPP - SecOps Issues Analysis"
+  "id": "cnapp_posture_issues_combined_with_ag",
+  "name": "CNAPP - [SecOps Issues Analysis]"
 }

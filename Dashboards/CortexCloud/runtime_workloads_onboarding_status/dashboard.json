@@ -1,7 +1,7 @@
 {
   "dashboards_data": [
     {
-      "name": "CNAPP - Runtime Workload Protection/Scan Status",
+      "name": "CNAPP - [Runtime Workload Protection/Scan Status]",
       "description": "Status of discovered running VMs, K8S Clusters, Serverless Functions, Container Instances (Drift)",
       "status": "ENABLED",
       "layout": [
@@ -1542,5 +1542,5 @@
     }
   ],
   "id": "",
-  "name": "CNAPP - Runtime Workload Protection/Scan Status"
+  "name": "CNAPP - [Runtime Workload Protection/Scan Status]"
 }
