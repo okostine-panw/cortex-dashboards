@@ -1,8 +1,8 @@
 {
   "dashboards_data": [
     {
-      "name": "CORTEX [AppSec - Findings]",
-      "description": "CORTEX [AppSec - Findings]",
+      "name": "CORTEX - [AppSec - Findings]",
+      "description": "CORTEX - [AppSec - Findings]",
       "status": "ENABLED",
       "layout": [
         {
